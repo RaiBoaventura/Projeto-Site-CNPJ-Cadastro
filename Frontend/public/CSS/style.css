@@ -1,0 +1,359 @@
+body {
+    background-color: #1c1c1c;
+    /* Mantém o fundo escuro */
+    color: #e0e0e0;
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+}
+
+.card {
+    margin-bottom: 20px;
+    /* Espaço extra entre os cards */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    /* Sombra leve */
+}
+
+.form-control {
+    border-radius: 8px;
+    padding: 10px 15px;
+    transition: box-shadow 0.3s ease;
+}
+
+.is-invalid {
+    border-color: #dc3545;
+}
+
+.is-valid {
+    border-color: #28a745;
+}
+
+.error-message {
+    font-size: 0.875em;
+    color: #dc3545;
+}
+
+tr {
+    color: white;
+}
+
+th {
+    color: white;
+}
+
+.form-control:focus {
+    border-color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+}
+
+.btn {
+    border-radius: 8px;
+    /* Bordas arredondadas */
+    padding: 10px 20px;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #ffcc00;
+    transform: translateY(-3px);
+    /* Efeito de elevação */
+}
+
+
+/* Logo da Empresa */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 20px;
+    max-width: 1200px;
+}
+
+.logo {
+    height: 60px;
+    margin-right: auto;
+}
+
+h1,
+h2,
+h3 {
+    font-family: 'Arial Black', sans-serif;
+    font-size: 2.5rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+
+/* Títulos */
+h5 {
+    color: #ffd700;
+    font-weight: 700;
+}
+
+/* Estilos para Cards */
+.card {
+    background-color: #2a2a2a;
+    border: none;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+    color: #e0e0e0;
+    border-radius: 8px;
+}
+
+/* Inputs and Focus */
+.form-control {
+    background-color: #333;
+    border: 1px solid #ffd700;
+    color: #e0e0e0;
+    border-radius: 5px;
+    padding: 8px 12px;
+}
+
+.form-control:focus {
+    border-color: #ffd700;
+    box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+    background-color: #444;
+}
+
+/* Estilo para Campos Somente Leitura */
+.form-control[readonly],
+.form-control[disabled] {
+    background-color: #2b2b2b;
+    /* Fundo mais escuro para campos readonly */
+    color: #bbbbbb;
+    /* Texto em cinza claro */
+    border-color: #666;
+}
+
+/* Botão Principal */
+.btn-primary {
+    background: linear-gradient(90deg, #ffd700, #e6b800);
+    box-shadow: 0px 4px 8px rgba(255, 215, 0, 0.4);
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 6px 12px rgba(255, 215, 0, 0.6);
+}
+
+
+/* Botão de Contorno */
+.btn-outline-primary {
+    border-color: #ffd700;
+    color: #ffd700;
+}
+
+.btn-outline-primary:hover {
+    background-color: #ffd700;
+    color: #1c1c1c;
+}
+
+/* Botão de Perigo */
+.btn-danger {
+    background-color: #e63946;
+    border-color: #e63946;
+    color: #fff;
+    font-weight: bold;
+}
+
+.btn-danger:hover {
+    background-color: #d62839;
+    border-color: #d62839;
+}
+
+/* Ajustes de Títulos */
+.text-primary {
+    color: #ffd700 !important;
+    font-weight: bold;
+}
+
+.text-secondary {
+    color: #bbbbbb !important;
+}
+
+/* Links e Ícones */
+a,
+.link {
+    color: #ffd700;
+    text-decoration: none;
+}
+
+a:hover,
+.link:hover {
+    color: #ffcc00;
+    text-decoration: underline;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    color: #ffd700;
+    margin-bottom: 0.75rem;
+}
+
+/* Remover cor de fundo aplicada pelo navegador para campos preenchidos automaticamente */
+/* Remover a cor de fundo padrão de campos preenchidos automaticamente e definir o texto como claro */
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:hover {
+    -webkit-box-shadow: 0 0 0px 1000px #333 inset;
+    /* Cor de fundo do campo */
+    box-shadow: 0 0 0px 1000px #333 inset;
+    -webkit-text-fill-color: #e0e0e0;
+    /* Cor do texto para preenchimento automático */
+    color: #e0e0e0;
+    /* Cor do texto para outros navegadores */
+}
+
+
+/* Cor de fundo em foco */
+.form-control:focus {
+    border-color: #ffd700;
+    box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+    background-color: #3a3a3a;
+    /* Fundo mais claro para foco */
+    color: #e0e0e0;
+}
+
+/* Estilo para campos readonly e preenchidos automaticamente */
+.form-control[readonly],
+.form-control[disabled],
+input:-webkit-autofill {
+    background-color: #2b2b2b !important;
+    /* Fundo mais escuro */
+    color: #ffffff !important;
+    -webkit-text-fill-color: #bbbbbb !important;
+    /* Cor do texto ao autopreencher */
+}
+
+/* Zona de Upload */
+.drop-zone {
+    border: 2px dashed #ffd700;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    background-color: #2a2a2a;
+    color: #ffd700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.drop-zone:hover {
+    background-color: #333;
+    transform: scale(1.05);
+}
+
+.drop-zone.drag-over {
+    background-color: #444;
+    border-color: #ffcc00;
+}
+
+.file-list {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.file-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin: 5px 0;
+    background: #333;
+    border-radius: 8px;
+    animation: fadeIn 0.3s ease;
+}
+
+.file-list li a {
+    color: #00d9ff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.file-list li a:hover {
+    text-decoration: underline;
+}
+
+.file-list .remove-btn {
+    background-color: #e63946;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background-color 0.3s ease;
+}
+
+.file-list .remove-btn:hover {
+    background-color: #d62839;
+}
+
+/* Animação */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* Estilo para o campo CNPJ inválido */
+.is-invalid {
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25%,
+    75% {
+        transform: translateX(-5px);
+    }
+
+    50% {
+        transform: translateX(5px);
+    }
+}
+
+
+/* Estilo para a mensagem de erro */
+.invalid-feedback {
+    color: #e63946;
+    font-size: 0.875rem;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    text-shadow: 0px 2px 4px rgba(255, 215, 0, 0.7);
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    font-size: 1rem;
+    color: #bbbbbb;
+}
+
+.card {
+    margin-bottom: 25px;
+    /* Mais espaço entre os cards */
+}
+
+h2 {
+    font-size: 1.75rem;
+    color: #ffd700;
+    font-weight: 700;
+}

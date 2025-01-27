@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Empresa Detalhada</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+
+    <!-- CSS Customizado -->
+    <link rel="stylesheet" href="CSS/crudStyle.css">
+</head>
+
+<body>
+    <div class="container my-4">
+        <h1 class="text-center">CRUD Empresa Detalhada</h1>
+        <p class="text-muted text-center">Gerencie os registros de Empresa, Sócios e Referências Bancárias/Comerciais.
+        </p>
+
+        <!-- Empresa Section -->
+        <div class="my-5">
+            <h2>Empresas</h2>
+            <button class="btn btn-primary mb-3" id="addEmpresaBtn">+ Adicionar Empresa</button>
+            <table class="table table-hover table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>CNPJ</th>
+                        <th>Razão Social</th>
+                        <th>Telefone</th>
+                        <th>Referências</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="empresaTableBody">
+                    <!-- Dados dinâmicos -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Modal para Adicionar/Editar Empresa -->
+        <div class="modal fade" id="empresaModal" tabindex="-1" aria-labelledby="empresaModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="empresaModalLabel">Adicionar Empresa</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="empresaForm">
+                            <div class="mb-3">
+                                <label for="cnpj" class="form-label">CNPJ</label>
+                                <input type="text" id="cnpj" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="razao_social" class="form-label">Razão Social</label>
+                                <input type="text" id="razao_social" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="telefone" class="form-label">Telefone</label>
+                                <input type="text" id="telefone" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="referencias_bancarias" class="form-label">Referências Bancárias</label>
+                                <textarea id="referencias_bancarias" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="referencias_comerciais" class="form-label">Referências Comerciais</label>
+                                <textarea id="referencias_comerciais" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="socios" class="form-label">Sócios</label>
+                                <textarea id="socios" class="form-control" rows="3"></textarea>
+                            </div>
+                            <input type="hidden" id="empresaId">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="saveEmpresaBtn">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Detalhes da Empresa -->
+        <div class="modal fade" id="detalhesModal" tabindex="-1" aria-labelledby="detalhesModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="detalhesModalLabel">Detalhes da Empresa</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="detalhesConteudo"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript Customizado -->
+    <script src="../JS/" defer></script>
+</body>
+
+</html>

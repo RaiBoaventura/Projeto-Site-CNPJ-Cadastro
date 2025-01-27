@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Referências</title>
+    <link rel="stylesheet" href="/Frontend/bootstrap-5.0.2-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/Frontend/public/CSS/style.css">
+    <script type="module" src="/Frontend/public/JS/views/bancos.js" defer></script>
+</head>
+
+<body>
+    <div class="container my-4">
+        <header class="text-center mb-4">
+            <h1 class="text-primary">Formulário de Referências</h1>
+            <p class="text-secondary">Adicione suas referências comerciais e bancárias de forma organizada.</p>
+        </header>
+
+        <!-- Botão para adicionar referência comercial -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="text-primary">Referências Comerciais</h2>
+            <button type="button" class="btn btn-primary" onclick="adicionarReferenciaComercial()">+ Adicionar</button>
+        </div>
+
+        <!-- Container para referências comerciais -->
+        <div id="commercialRefsContainer" class="mb-5">
+            <div class="card p-3 commercial-ref-form">
+                <h4 class="card-title">Referência Comercial</h4>
+                <div class="mb-3">
+                    <label class="form-label">Fornecedor:</label>
+                    <input type="text" class="form-control" placeholder="Nome do Fornecedor">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Telefone:</label>
+                    <input type="text" class="form-control" placeholder="Telefone">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Ramo:</label>
+                    <input type="text" class="form-control" placeholder="Ramo de Atividade">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Contato:</label>
+                    <input type="text" class="form-control" placeholder="Nome do Contato">
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão para adicionar referência bancária -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="text-primary">Referências Bancárias</h2>
+            <button type="button" class="btn btn-primary btn-lg" onclick="adicionarReferenciaBancaria()">+
+                Adicionar</button>
+        </div>
+
+        <!-- Container para referências bancárias -->
+        <div id="bankRefsContainer">
+            <div class="card p-3 bank-ref-form">
+                <h4 class="card-title">Referência Bancária</h4>
+                <div class="mb-3">
+                    <label class="form-label">Banco:</label>
+                    <input type="text" class="form-control" placeholder="Nome do Banco">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Agência:</label>
+                    <input type="text" class="form-control" placeholder="Agência">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Conta:</label>
+                    <input type="text" class="form-control" placeholder="Conta">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Data de Abertura:</label>
+                    <input type="date" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Telefone:</label>
+                    <input type="text" class="form-control" placeholder="Telefone">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Gerente:</label>
+                    <input type="text" class="form-control" placeholder="Nome do Gerente">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Observações:</label>
+                    <textarea class="form-control" placeholder="Observações"></textarea>
+                </div>
+            </div>
+        </div>
+        <!-- Botão de concluir cadastro -->
+        <div class="text-center mt-4">
+            <button type="button" id="concluirCadastroBtn" class="btn btn-success btn-lg">Concluir Cadastro</button>
+        </div>
+    </div>
+</body>
+
+</html>
