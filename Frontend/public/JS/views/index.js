@@ -16,31 +16,60 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputsObrigatorios = [
         "cnpj",
         "razao_social",
-        "nome_fantasia",
+        "inscricao_estadual",
         "ramo_atividade",
         "data_fundacao",
         "capital_social",
         "telefone",
         "email",
+        "conta_bancaria",
+        "contador",
+        "telefone_contador",
         "logradouro",
+        "numero_complemento",
         "bairro",
         "cidade",
         "uf"
     ].map((id) => document.getElementById(id));
+    
+    const arquivosObrigatorios = [
+        document.getElementById("contrato_Social"),
+        document.getElementById("cartao_CNPJ"),
+        document.getElementById("relacao_Faturamento")
+    ];
+    
 
     /**
      * Função para validar todos os campos obrigatórios
      */
     function validarFormulario() {
-        const camposValidos = inputsObrigatorios.every((input) => input && input.value.trim() !== "");
-        const arquivosValidos =
-            (contratoInput?.files?.length || 0) > 0 &&
-            (cnpjFileInput?.files?.length || 0) > 0 &&
-            (faturamentoInput?.files?.length || 0) > 0;
-
-        // Habilitar o botão apenas se todos os campos e arquivos forem válidos
-        continuarBtn.disabled = !(camposValidos && arquivosValidos);
+        // Verifica se os campos obrigatórios estão preenchidos
+        const camposValidos = inputsObrigatorios.every((input) => {
+            const preenchido = input && input.value.trim() !== ""; // Basta verificar se está preenchido
+            console.log(`Campo ${input.id}: preenchido=${preenchido}`);
+            return preenchido; // Não verifica 'is-valid' aqui
+        });
+    
+        // Verifica se os arquivos obrigatórios estão preenchidos
+        const contratoValido = contratoInput?.files?.length > 0;
+        const cnpjValido = cnpjFileInput?.files?.length > 0;
+        const faturamentoValido = faturamentoInput?.files?.length > 0;
+    
+        console.log("Contrato válido:", contratoValido);
+        console.log("CNPJ válido:", cnpjValido);
+        console.log("Faturamento válido:", faturamentoValido);
+    
+        const arquivosValidos = contratoValido && cnpjValido && faturamentoValido;
+    
+        // Verifica o formulário como um todo
+        const formularioValido = camposValidos && arquivosValidos;
+        console.log("Formulário válido:", formularioValido);
+    
+        // Habilita ou desabilita o botão
+        continuarBtn.disabled = !formularioValido;
     }
+    
+    
 
     /**
      * Função para configurar o drag-and-drop e validação dos arquivos
@@ -83,7 +112,12 @@ document.addEventListener("DOMContentLoaded", () => {
             arquivos.forEach((arquivo) => dataTransfer.items.add(arquivo));
             input.files = dataTransfer.files;
         };
-
+        [contratoInput, cnpjFileInput, faturamentoInput].forEach((input) => {
+            input.addEventListener("change", () => {
+                console.log(`Arquivos selecionados no campo ${input.id}:`, input.files.length);
+                validarFormulario(); // Revalida o formulário após a seleção
+            });
+        });
         dropZone.addEventListener("click", () => fileInput.click());
         fileInput.addEventListener("change", (event) => mostrarArquivos(event.target.files));
         dropZone.addEventListener("dragover", (event) => {
@@ -94,10 +128,14 @@ document.addEventListener("DOMContentLoaded", () => {
         dropZone.addEventListener("drop", (event) => {
             event.preventDefault();
             dropZone.classList.remove("drag-over");
-            fileInput.files = event.dataTransfer.files;
-            mostrarArquivos(event.dataTransfer.files);
-            validarFormulario();
-        });
+        
+            const arquivos = event.dataTransfer.files;
+            fileInput.files = arquivos; // Vincula os arquivos ao input oculto
+        
+            console.log(`Arquivos no campo ${fileInput.id}:`, arquivos.length); // Verifica se os arquivos estão sendo registrados
+            mostrarArquivos(arquivos); // Exibe os arquivos na interface
+            validarFormulario(); // Revalida o formulário
+        });  
     }
 
     // Configuração de uploads
@@ -213,4 +251,8 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("pessoaJuridica", JSON.stringify(pessoaJuridica));
         window.location.href = "socios.html";
     });
+
+    console.log("Arquivos no contrato_Social:", contratoInput.files.length);
+console.log("Arquivos no cartao_CNPJ:", cnpjFileInput.files.length);
+console.log("Arquivos no relacao_Faturamento:", faturamentoInput.files.length);
 });
