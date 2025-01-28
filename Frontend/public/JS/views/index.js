@@ -247,12 +247,22 @@ document.addEventListener("DOMContentLoaded", () => {
             cidade: document.getElementById("cidade").value,
             uf: document.getElementById("uf").value,
         };
+        const cnpj = document.getElementById("cnpj").value.trim();
 
-        localStorage.setItem("pessoaJuridica", JSON.stringify(pessoaJuridica));
-        window.location.href = "socios.html";
+        if (!cnpj) {
+            alert("CNPJ não preenchido. Por favor, preencha o campo.");
+            return;
+        }
+    
+        // Salva o CNPJ no localStorage
+        console.log("Salvando CNPJ no localStorage:", cnpj); // Log para verificar o CNPJ sendo salvo
+        localStorage.setItem("empresaCNPJ", JSON.stringify(cnpj));
+    
+        // Redireciona para a página de sócios
+        window.location.href = "socios.html";  
+      
     });
+    console.log("Salvando CNPJ no localStorage:", cnpj); // Log para verificar o CNPJ sendo salvo
+    localStorage.setItem("empresaCNPJ", JSON.stringify(cnpj));
 
-    console.log("Arquivos no contrato_Social:", contratoInput.files.length);
-console.log("Arquivos no cartao_CNPJ:", cnpjFileInput.files.length);
-console.log("Arquivos no relacao_Faturamento:", faturamentoInput.files.length);
 });
