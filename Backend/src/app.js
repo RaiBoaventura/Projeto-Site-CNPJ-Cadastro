@@ -7,20 +7,32 @@ const empresaRoutes = require('./routes/empresaRoutes');
 const socioRoutes = require('./routes/socioRoutes');
 const referenciaRoutes = require('./routes/referenciaRoutes');
 const cnpjRoutes = require('./routes/cnpjRoutes');
+const salvarTudoRoutes = require('./routes/salvarTudoRoutes'); // Confirme que este caminho está correto
 
 const app = express();
+app.use((req, res, next) => {
+    console.log(`Requisição recebida: ${req.method} ${req.originalUrl}`);
+    next();
+});
 
 // Configurar middlewares
 app.use(cors());
 app.use(bodyParser.json());
 
 // Configurar rotas
-app.use('/empresa', empresaRoutes); // Rotas para empresas
-app.use('/socios', socioRoutes); // Rotas para sócios
-app.use('/referencias', referenciaRoutes); // Rotas para referências
-app.use('/cnpj', cnpjRoutes); // Rotas para busca de CNPJ
+app.use('/empresa', empresaRoutes);
+app.use('/socios', socioRoutes);
+app.use('/referencias', referenciaRoutes);
+app.use('/cnpj', cnpjRoutes);
+app.use('/api/salvarTudo', salvarTudoRoutes);
 
-// Rota padrão para testar se o servidor está funcionando
+
+
+app.use((req, res) => {
+    res.status(404).json({ error: "Rota não encontrada" });
+});
+
+// Teste do servidor
 app.get('/', (req, res) => {
     res.send('API funcionando!');
 });

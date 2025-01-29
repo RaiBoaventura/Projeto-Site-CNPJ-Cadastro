@@ -48,11 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error("Erro ao carregar sócios:", error);
         }
-        
     }
     
-    
-
     // Função para criar campos de sócio no DOM
     function criarCamposSocio(socio = {}, index) {
         const socioDiv = document.createElement("div");
@@ -116,51 +113,65 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
     
+                console.log(`Removendo elemento com ID socio-${index}`);
+    
                 // Remove o elemento do DOM
                 socioContainer.removeChild(elemento);
     
                 // Remove o sócio do array de dados
                 sociosData.splice(index, 1);
     
-                // Atualiza os índices no DOM
+                // Atualiza os índices no DOM e no array
                 atualizarIndices();
+    
+                console.log("Array atualizado:", sociosData);
             });
         }
     }
+    
+    
+    
     
 
     // Adicionar eventos para buscar dados do CEP
     function adicionarEventoCEP(index) {
         const cepInput = document.getElementById(`cep-socio-${index}`);
+        const enderecoInput = document.getElementById(`endereco-socio-${index}`);
+        const bairroInput = document.getElementById(`bairro-socio-${index}`);
+        const cidadeInput = document.getElementById(`cidade-socio-${index}`);
+        const ufInput = document.getElementById(`uf-socio-${index}`);
+    
         if (cepInput) {
             cepInput.addEventListener("blur", async () => {
-                const cep = cepInput.value.replace(/\D/g, "");
-                if (cep.length !== 8) {
-                    alert("CEP inválido! Digite um CEP válido.");
+                const cep = cepInput.value.replace(/\D/g, ""); // Remove caracteres não numéricos
+    
+                if (!cep || cep.length !== 8) {
+                    console.warn(`CEP inválido: ${cep}`);
                     return;
                 }
-
+    
                 try {
                     const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
                     if (!response.ok) throw new Error("Erro ao buscar endereço");
-
                     const data = await response.json();
+    
                     if (data.erro) {
-                        alert("CEP não encontrado.");
+                        console.warn(`CEP não encontrado: ${cep}`);
                         return;
                     }
-
-                    // Preencher os campos relacionados ao CEP
-                    document.getElementById(`endereco-socio-${index}`).value = data.logradouro || "";
-                    document.getElementById(`bairro-socio-${index}`).value = data.bairro || "";
-                    document.getElementById(`cidade-socio-${index}`).value = data.localidade || "";
-                    document.getElementById(`uf-socio-${index}`).value = data.uf || "";
+    
+                    // Verifica se os campos relacionados existem antes de preenchê-los
+                    if (enderecoInput) enderecoInput.value = data.logradouro || "";
+                    if (bairroInput) bairroInput.value = data.bairro || "";
+                    if (cidadeInput) cidadeInput.value = data.localidade || "";
+                    if (ufInput) ufInput.value = data.uf || "";
                 } catch (error) {
                     console.error("Erro ao buscar CEP:", error);
                 }
             });
         }
     }
+    
 
     // Atualizar os índices dos sócios após remoção
     function atualizarIndices() {
@@ -172,13 +183,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 idParts[idParts.length - 1] = newIndex;
                 input.id = idParts.join("-");
             });
+    
             const removeBtn = card.querySelector(".remove-socio-btn");
             if (removeBtn) {
                 removeBtn.dataset.index = newIndex;
+    
+                // Remove eventos anteriores para evitar duplicação
+                removeBtn.replaceWith(removeBtn.cloneNode(true));
+                adicionarEventoRemoverSocio(newIndex); // Reassocia o evento
             }
         });
+    
+        // Atualiza o array de sócios para refletir os novos índices
+        sociosData = Array.from(document.querySelectorAll(".card")).map((card, index) => {
+            return {
+                nome: document.getElementById(`nome-socio-${index}`).value.trim(),
+                cep: document.getElementById(`cep-socio-${index}`).value.trim(),
+                endereco: document.getElementById(`endereco-socio-${index}`).value.trim(),
+                numero: document.getElementById(`numero-socio-${index}`).value.trim(),
+                bairro: document.getElementById(`bairro-socio-${index}`).value.trim(),
+                cidade: document.getElementById(`cidade-socio-${index}`).value.trim(),
+                uf: document.getElementById(`uf-socio-${index}`).value.trim(),
+                telefone: document.getElementById(`telefone-socio-${index}`).value.trim(),
+                email: document.getElementById(`email-socio-${index}`).value.trim(),
+            };
+        });
+    
         socioIndex = sociosData.length; // Atualiza o índice global
     }
+    
+    
     
 
     // Adicionar um novo sócio

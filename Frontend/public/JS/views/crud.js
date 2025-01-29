@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const detalhesModal = new bootstrap.Modal(document.getElementById("detalhesModal"));
     const addEmpresaBtn = document.getElementById("addEmpresaBtn");
     const saveEmpresaBtn = document.getElementById("saveEmpresaBtn");
-
     const cnpjInput = document.getElementById("cnpj");
     const razaoSocialInput = document.getElementById("razao_social");
     const telefoneInput = document.getElementById("telefone");

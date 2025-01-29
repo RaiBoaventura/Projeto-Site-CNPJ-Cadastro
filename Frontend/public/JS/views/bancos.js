@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const payload = { pessoaJuridica, socios, commercialRefs, bankRefs };
 
         try {
-            const response = await fetch("http://localhost:3000/salvar-tudo", {
+            const response = await fetch("http://localhost:3000/api/salvarTudo", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
