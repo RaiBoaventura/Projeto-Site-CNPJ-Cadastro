@@ -268,22 +268,59 @@ document.addEventListener("DOMContentLoaded", () => {
         return valid;
     }
 
-    // Evento para avançar para a próxima etapa
-    avancarBtn.addEventListener("click", (event) => {
-        if (sociosData.length === 0) {
-            alert("É necessário adicionar pelo menos um sócio antes de avançar.");
-            event.preventDefault(); // Impede o redirecionamento
-            return;
-        }
-        
-        if (!validarSocios()) {
-            event.preventDefault();
+// 🚀 Captura e salva os sócios no localStorage antes de avançar
+function salvarSocios() {
+    let sociosSalvos = [];
+
+    document.querySelectorAll(".card").forEach((card, index) => {
+        const nome = document.getElementById(`nome-socio-${index}`).value.trim();
+        const cep = document.getElementById(`cep-socio-${index}`).value.trim();
+        const endereco = document.getElementById(`endereco-socio-${index}`).value.trim();
+        const numero = document.getElementById(`numero-socio-${index}`).value.trim();
+        const bairro = document.getElementById(`bairro-socio-${index}`).value.trim();
+        const cidade = document.getElementById(`cidade-socio-${index}`).value.trim();
+        const uf = document.getElementById(`uf-socio-${index}`).value.trim();
+        const telefone = document.getElementById(`telefone-socio-${index}`).value.trim();
+        const email = document.getElementById(`email-socio-${index}`).value.trim();
+
+        // Verificação de campos obrigatórios
+        if (!nome || !email || !telefone) {
+            console.warn(`⚠️ Sócio ${index + 1} tem campos obrigatórios vazios e será ignorado.`);
             return;
         }
 
-        localStorage.setItem("sociosData", JSON.stringify(sociosData));
-        window.location.href = "bancos.html";
+        const socio = { nome, cep, endereco, numero, bairro, cidade, uf, telefone, email };
+        sociosSalvos.push(socio);
     });
+
+    if (sociosSalvos.length === 0) {
+        alert("⚠️ É necessário adicionar pelo menos um sócio válido antes de continuar.");
+        return false;
+    }
+
+    // Salva os sócios no localStorage
+    const idEmpresa = JSON.parse(localStorage.getItem("empresaID"));
+    if (!idEmpresa) {
+        alert("⚠️ ID da empresa não encontrado. Volte e preencha os dados corretamente.");
+        return false;
+    }
+
+    const sociosData = { id_empresa: idEmpresa, socios: sociosSalvos };
+    localStorage.setItem("sociosData", JSON.stringify(sociosData));
+
+    console.log("✅ Sócios salvos no localStorage:", sociosData);
+    return true;
+}
+
+// 🚀 Evento para avançar para a próxima etapa
+avancarBtn.addEventListener("click", (event) => {
+    if (!salvarSocios()) {
+        event.preventDefault();
+        return;
+    }
+
+    window.location.href = "bancos.html";
+});
 
 
     

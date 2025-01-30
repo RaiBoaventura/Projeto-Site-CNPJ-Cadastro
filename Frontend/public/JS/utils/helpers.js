@@ -108,7 +108,6 @@ export function mascararEValidarTelefone(telefone) {
     // Caso o telefone não tenha o tamanho esperado, retorna null
     return null;
 }
-
 /**
  * Limpa classes de validação de um campo
  * @param {HTMLElement} campo - Campo do formulário

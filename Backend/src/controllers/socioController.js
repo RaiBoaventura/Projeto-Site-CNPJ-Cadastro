@@ -1,5 +1,6 @@
 const pool = require('../models/db'); // Conexão com o banco de dados
 
+
 // Criar ou atualizar sócios
 const saveSocios = async (req, res) => {
     const { id_empresa, socios } = req.body;
@@ -10,8 +11,15 @@ const saveSocios = async (req, res) => {
         });
     }
 
+    console.log("🟢 Recebendo sócios para salvar:", { id_empresa, socios });
+
     try {
         for (const socio of socios) {
+            if (!socio.nome?.trim()) {
+                console.warn("⚠ Sócio ignorado: Nome vazio");
+                continue;
+            }
+
             const query = `
                 INSERT INTO socios (
                     id_empresa, nome, endereco, bairro, cidade, uf, telefone, email
@@ -24,28 +32,31 @@ const saveSocios = async (req, res) => {
                     telefone = EXCLUDED.telefone,
                     email = EXCLUDED.email;
             `;
+
             const values = [
                 id_empresa,
                 socio.nome,
-                socio.endereco,
-                socio.bairro,
-                socio.cidade,
-                socio.uf,
-                socio.telefone,
-                socio.email,
+                socio.endereco ?? null,
+                socio.bairro ?? null,
+                socio.cidade ?? null,
+                socio.uf ?? null,
+                socio.telefone ?? null,
+                socio.email ?? null,
             ];
             await pool.query(query, values);
         }
 
+        console.log("✅ Sócios salvos com sucesso!");
         res.status(200).json({ message: 'Sócios salvos com sucesso.' });
     } catch (error) {
-        console.error('Erro ao salvar sócios:', error);
+        console.error("❌ Erro ao salvar sócios:", error);
         res.status(500).json({
-            message: 'Erro ao salvar sócios.',
+            message: "Erro ao salvar sócios.",
             error: error.message,
         });
     }
 };
+
 
 // Listar sócios por empresa
 const listSociosByEmpresa = async (req, res) => {

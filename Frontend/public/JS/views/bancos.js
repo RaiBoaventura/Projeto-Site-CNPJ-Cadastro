@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ramo_atividade: ref.querySelector('input[placeholder="Ramo de Atividade"]').value.trim(),
             contato: ref.querySelector('input[placeholder="Nome do Contato"]').value.trim(),
         }));
-
+    
         const bankRefs = Array.from(document.querySelectorAll(".bank-ref-form")).map((ref) => ({
             banco: ref.querySelector('input[placeholder="Nome do Banco"]').value.trim(),
             agencia: ref.querySelector('input[placeholder="Agência"]').value.trim(),
@@ -146,26 +146,34 @@ document.addEventListener("DOMContentLoaded", () => {
             gerente: ref.querySelector('input[placeholder="Nome do Gerente"]').value.trim(),
             observacoes: ref.querySelector('textarea[placeholder="Observações"]').value.trim(),
         }));
-
+    
         const pessoaJuridica = JSON.parse(localStorage.getItem("pessoaJuridica"));
         const socios = JSON.parse(localStorage.getItem("sociosData"));
-
-        if (!pessoaJuridica || !socios || !commercialRefs.length || !bankRefs.length) {
-            alert("Por favor, preencha todos os campos antes de concluir.");
+    
+        // 🔥 Verificação extra antes do envio
+        console.log("🟢 Dados recuperados do localStorage:");
+        console.log("📌 Pessoa Jurídica:", pessoaJuridica);
+        console.log("📌 Sócios:", socios);
+        console.log("📌 Referências Comerciais:", commercialRefs);
+        console.log("📌 Referências Bancárias:", bankRefs);
+    
+        // Verificar se pessoaJuridica está vazia
+        if (!pessoaJuridica || Object.keys(pessoaJuridica).length === 0) {
+            alert("Erro: Os dados da empresa não foram carregados corretamente. Por favor, volte e preencha os campos.");
             return;
         }
-
+    
         const payload = { pessoaJuridica, socios, commercialRefs, bankRefs };
-
+    
         try {
             const response = await fetch("http://localhost:3000/api/salvarTudo", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
-
+    
             if (!response.ok) throw new Error("Erro ao salvar os dados no servidor.");
-
+    
             const result = await response.json();
             alert(result.message || "Dados salvos com sucesso!");
             limparDadosLocalStorage();
@@ -174,6 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Erro ao concluir o cadastro. Tente novamente.");
         }
     }
+    
 
     function limparDadosLocalStorage() {
         localStorage.removeItem("pessoaJuridica");
