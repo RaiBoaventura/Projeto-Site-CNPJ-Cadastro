@@ -4,6 +4,7 @@ const {
     createEmpresa,
     updateEmpresa,
     deleteEmpresa,
+    getEmpresaDetalhada
 } = require('../controllers/empresaController');
 
 const router = express.Router();
@@ -19,5 +20,7 @@ router.put('/:id', updateEmpresa);
 
 // Rota para deletar uma empresa
 router.delete('/:id', deleteEmpresa);
+
+router.get("/vw_empresa_detalhada", getEmpresaDetalhada); // 🔥 Adicionando a rota correta
 
 module.exports = router;

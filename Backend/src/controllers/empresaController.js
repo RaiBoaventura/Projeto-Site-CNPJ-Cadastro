@@ -63,7 +63,24 @@ const updateEmpresa = async (req, res) => {
         res.status(500).json({ message: 'Erro ao atualizar empresa.' });
     }
 };
+// 🔹 Função para obter todos os dados da view `vw_empresa_detalhada`
+const getEmpresaDetalhada = async (req, res) => {
+    try {
+        console.log("📌 Buscando dados da view vw_empresa_detalhada...");
 
+        const result = await pool.query("SELECT * FROM vw_empresa_detalhada");
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Nenhuma empresa encontrada." });
+        }
+
+        console.log("✅ Dados obtidos com sucesso:", result.rows);
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error("❌ Erro ao buscar empresa detalhada:", error);
+        res.status(500).json({ message: "Erro ao buscar empresa detalhada." });
+    }
+};
 // Deletar uma empresa pelo ID
 const deleteEmpresa = async (req, res) => {
     const { id } = req.params;
@@ -92,4 +109,5 @@ module.exports = {
     createEmpresa,
     updateEmpresa,
     deleteEmpresa,
+    getEmpresaDetalhada 
 };

@@ -13,67 +13,129 @@ document.addEventListener("DOMContentLoaded", () => {
     const empresaIdInput = document.getElementById("empresaId");
 
     // Exibir os detalhes de uma empresa
-    window.exibirDetalhes = (empresaData) => {
+    window.exibirDetalhes = (empresa) => {
         try {
-            const empresa = JSON.parse(decodeURIComponent(empresaData));
+            if (typeof empresa === "string") {
+                empresa = JSON.parse(decodeURIComponent(empresa)); // 🔥 Corrige se for string JSON
+            }
+    
+            console.log("📌 Exibindo detalhes da empresa:", empresa);
+    
             const detalhesConteudo = document.getElementById("detalhesConteudo");
-
+    
             detalhesConteudo.innerHTML = `
                 <h4>${empresa.razao_social || "Não informado"} (CNPJ: ${empresa.cnpj || "Não informado"})</h4>
-                <p><strong>Telefone:</strong> ${empresa.empresa_telefone || "Não informado"}</p>
-                <h5>Referências Bancárias:</h5>
+                <p><strong>Nome Fantasia:</strong> ${empresa.nome_fantasia || "Não informado"}</p>
+                <p><strong>Inscrição Estadual:</strong> ${empresa.inscricao_estadual || "Não informado"}</p>
+                <p><strong>Ramo de Atividade:</strong> ${empresa.ramo_atividade || "Não informado"}</p>
+                <p><strong>Data de Fundação:</strong> ${empresa.data_fundacao || "Não informado"}</p>
+                <p><strong>Capital Social:</strong> R$ ${empresa.capital_social || "Não informado"}</p>
+                <p><strong>Conta Bancária:</strong> ${empresa.conta_bancaria || "Não informado"}</p>
+                <p><strong>Email:</strong> ${empresa.email || "Não informado"}</p>
+                <p><strong>Site:</strong> ${empresa.site || "Não informado"}</p>
+                <p><strong>Contador:</strong> ${empresa.contador || "Não informado"}</p>
+    
+                <h5>📍 Endereço:</h5>
+                <p>${empresa.logradouro || "Não informado"}, ${empresa.numero_complemento || "S/N"}</p>
+                <p>Bairro: ${empresa.empresa_bairro || "Não informado"}, Cidade: ${empresa.empresa_cidade || "Não informado"} - ${empresa.empresa_uf || "Não informado"}</p>
+                
+                <h5>📞 Contatos:</h5>
+                <p><strong>Telefone da Empresa:</strong> ${empresa.empresa_telefone || "Não informado"}</p>
+                <p><strong>Telefone do Contador:</strong> ${empresa.telefone_contador || "Não informado"}</p>
+    
+                <h5>🏦 Referências Bancárias:</h5>
                 ${empresa.referencias_bancarias?.map(ref => `
                     <p>Banco: ${ref.banco || "-"}, Agência: ${ref.agencia || "-"}, Conta: ${ref.conta || "-"}</p>
+                    <p>Gerente: ${ref.gerente || "-"}, Telefone: ${ref.telefone || "-"}, Abertura: ${ref.data_abertura || "-"}</p>
                 `).join("") || "<p>Sem informações</p>"}
-                <h5>Referências Comerciais:</h5>
+    
+                <h5>🏢 Referências Comerciais:</h5>
                 ${empresa.referencias_comerciais?.map(ref => `
                     <p>Fornecedor: ${ref.fornecedor || "-"}, Contato: ${ref.contato || "-"}, Telefone: ${ref.telefone || "-"}</p>
+                    <p>Ramo de Atividade: ${ref.ramo_atividade || "-"}</p>
                 `).join("") || "<p>Sem informações</p>"}
-                <h5>Sócios:</h5>
+    
+                <h5>👥 Sócios:</h5>
                 ${empresa.socios?.map(socio => `
                     <p>Nome: ${socio.nome || "-"}, Email: ${socio.email || "-"}, Telefone: ${socio.telefone || "-"}</p>
+                    <p>Endereço: ${socio.endereco || "-"}, Bairro: ${socio.bairro || "-"}, Cidade: ${socio.cidade || "-"} - ${socio.uf || "-"}</p>
                 `).join("") || "<p>Sem informações</p>"}
             `;
-
+    
             detalhesModal.show();
         } catch (error) {
-            console.error("Erro ao processar os detalhes da empresa:", error);
-            alert("Não foi possível exibir os detalhes da empresa.");
+            console.error("❌ Erro ao processar os detalhes da empresa:", error);
+            alert("Erro ao exibir os detalhes da empresa.");
         }
     };
+    
+    
 
     // Carregar empresas na tabela
     async function carregarEmpresas() {
         try {
-            const response = await fetch("http://localhost:3000/vw_empresa_detalhada");
+            console.log("📌 Buscando empresas...");
+            
+            const response = await fetch("http://localhost:3000/empresa/vw_empresa_detalhada");
             if (!response.ok) throw new Error(`Erro ao carregar empresas: ${response.statusText}`);
-
+    
             const empresas = await response.json();
+            const empresaTableBody = document.getElementById("empresaTableBody");
             empresaTableBody.innerHTML = "";
+    
             empresas.forEach((empresa) => {
                 const row = document.createElement("tr");
-                const empresaEncoded = encodeURIComponent(JSON.stringify(empresa));
-
+    
                 row.innerHTML = `
                     <td>${empresa.id_empresa}</td>
                     <td>${empresa.cnpj}</td>
                     <td>${empresa.razao_social}</td>
                     <td>${empresa.empresa_telefone || "-"}</td>
                     <td>
-                        <button class="btn btn-info btn-sm" onclick='exibirDetalhes("${empresaEncoded}")'>Detalhes</button>
+                        <button class="btn btn-info btn-sm detalhes-btn" data-empresa='${encodeURIComponent(JSON.stringify(empresa))}'>Detalhes</button>
                     </td>
                     <td>
-                        <button class="btn btn-warning btn-sm me-2" onclick='editarEmpresa("${empresaEncoded}")'>Editar</button>
-                        <button class="btn btn-danger btn-sm" onclick="deletarEmpresa(${empresa.id_empresa})">Excluir</button>
+                        <button class="btn btn-warning btn-sm me-2 editar-btn" data-empresa='${encodeURIComponent(JSON.stringify(empresa))}'>Editar</button>
+                        <button class="btn btn-danger btn-sm deletar-btn" data-id="${empresa.id_empresa}">Excluir</button>
                     </td>
                 `;
+    
                 empresaTableBody.appendChild(row);
             });
+    
+            console.log("✅ Empresas carregadas com sucesso:", empresas);
+    
+            // 🔥 Adicionar eventos dinamicamente após carregar a tabela
+            adicionarEventos();
         } catch (error) {
-            console.error("Erro ao carregar empresas:", error);
+            console.error("❌ Erro ao carregar empresas:", error);
+            alert("Erro ao carregar empresas. Verifique se a API está rodando.");
         }
     }
-
+    
+    function adicionarEventos() {
+        document.querySelectorAll(".detalhes-btn").forEach((button) => {
+            button.addEventListener("click", () => {
+                const empresa = JSON.parse(decodeURIComponent(button.getAttribute("data-empresa")));
+                exibirDetalhes(empresa);
+            });
+        });
+    
+        document.querySelectorAll(".editar-btn").forEach((button) => {
+            button.addEventListener("click", () => {
+                const empresa = JSON.parse(decodeURIComponent(button.getAttribute("data-empresa")));
+                editarEmpresa(empresa);
+            });
+        });
+    
+        document.querySelectorAll(".deletar-btn").forEach((button) => {
+            button.addEventListener("click", () => {
+                const id = button.getAttribute("data-id");
+                deletarEmpresa(id);
+            });
+        });
+    }
+    
     // Limpar o formulário de empresa
     function limparFormularioEmpresa() {
         cnpjInput.value = "";

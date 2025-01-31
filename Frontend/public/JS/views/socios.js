@@ -266,7 +266,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 // 🚀 Captura e salva os sócios no localStorage antes de avançar
-// 🚀 Captura e salva os sócios no localStorage antes de avançar
 function salvarSocios() {
     let sociosSalvos = [];
 
