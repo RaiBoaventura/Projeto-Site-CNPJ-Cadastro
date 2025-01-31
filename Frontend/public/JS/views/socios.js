@@ -131,8 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
     
     
     
-    
-
     // Adicionar eventos para buscar dados do CEP
     function adicionarEventoCEP(index) {
         const cepInput = document.getElementById(`cep-socio-${index}`);
@@ -159,7 +157,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         console.warn(`CEP não encontrado: ${cep}`);
                         return;
                     }
-    
                     // Verifica se os campos relacionados existem antes de preenchê-los
                     if (enderecoInput) enderecoInput.value = data.logradouro || "";
                     if (bairroInput) bairroInput.value = data.bairro || "";
@@ -269,6 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 // 🚀 Captura e salva os sócios no localStorage antes de avançar
+// 🚀 Captura e salva os sócios no localStorage antes de avançar
 function salvarSocios() {
     let sociosSalvos = [];
 
@@ -298,19 +296,13 @@ function salvarSocios() {
         return false;
     }
 
-    // Salva os sócios no localStorage
-    const idEmpresa = JSON.parse(localStorage.getItem("empresaID"));
-    if (!idEmpresa) {
-        alert("⚠️ ID da empresa não encontrado. Volte e preencha os dados corretamente.");
-        return false;
-    }
+    // Salva apenas os sócios no localStorage (sem id_empresa)
+    localStorage.setItem("sociosData", JSON.stringify(sociosSalvos));
 
-    const sociosData = { id_empresa: idEmpresa, socios: sociosSalvos };
-    localStorage.setItem("sociosData", JSON.stringify(sociosData));
-
-    console.log("✅ Sócios salvos no localStorage:", sociosData);
+    console.log("✅ Sócios salvos no localStorage:", sociosSalvos);
     return true;
 }
+
 
 // 🚀 Evento para avançar para a próxima etapa
 avancarBtn.addEventListener("click", (event) => {
@@ -322,8 +314,6 @@ avancarBtn.addEventListener("click", (event) => {
     window.location.href = "bancos.html";
 });
 
-
-    
     // Inicializar o carregamento dos sócios
     carregarSocios();
 });

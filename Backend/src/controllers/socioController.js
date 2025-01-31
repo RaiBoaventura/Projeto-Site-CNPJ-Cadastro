@@ -1,19 +1,25 @@
 const pool = require('../models/db'); // Conexão com o banco de dados
 
-
-// Criar ou atualizar sócios
 const saveSocios = async (req, res) => {
     const { id_empresa, socios } = req.body;
 
-    if (!id_empresa || !Array.isArray(socios) || socios.length === 0) {
-        return res.status(400).json({
-            message: 'ID da empresa e a lista de sócios são obrigatórios.',
-        });
+    if (!id_empresa) {
+        return res.status(400).json({ message: "❌ ID da empresa é obrigatório." });
     }
 
-    console.log("🟢 Recebendo sócios para salvar:", { id_empresa, socios });
+    if (!Array.isArray(socios) || socios.length === 0) {
+        return res.status(400).json({ message: "❌ É necessário pelo menos um sócio válido." });
+    }
+
+    console.log("🔹 Tentando salvar sócios para a empresa:", id_empresa);
 
     try {
+        // Verificar se a empresa existe antes de inserir os sócios
+        const empresaCheck = await pool.query("SELECT id FROM empresa WHERE id = $1", [id_empresa]);
+        if (empresaCheck.rows.length === 0) {
+            return res.status(404).json({ message: "❌ Empresa não encontrada." });
+        }
+
         for (const socio of socios) {
             if (!socio.nome?.trim()) {
                 console.warn("⚠ Sócio ignorado: Nome vazio");
@@ -43,67 +49,66 @@ const saveSocios = async (req, res) => {
                 socio.telefone ?? null,
                 socio.email ?? null,
             ];
+
             await pool.query(query, values);
+            console.log(`✅ Sócio "${socio.nome}" salvo com sucesso!`);
         }
 
-        console.log("✅ Sócios salvos com sucesso!");
-        res.status(200).json({ message: 'Sócios salvos com sucesso.' });
+        res.status(200).json({ message: '✅ Sócios salvos com sucesso.' });
     } catch (error) {
         console.error("❌ Erro ao salvar sócios:", error);
         res.status(500).json({
-            message: "Erro ao salvar sócios.",
+            message: "❌ Erro ao salvar sócios.",
             error: error.message,
         });
     }
 };
 
-
-// Listar sócios por empresa
+// 🔹 Função para listar sócios por ID da empresa
 const listSociosByEmpresa = async (req, res) => {
-    const { id_empresa } = req.params;
-
-    if (!id_empresa) {
-        return res.status(400).json({ message: 'ID da empresa é obrigatório.' });
-    }
-
     try {
-        const query = 'SELECT * FROM socios WHERE id_empresa = $1 ORDER BY nome ASC';
-        const result = await pool.query(query, [id_empresa]);
-
-        res.json(result.rows);
-    } catch (error) {
-        console.error('Erro ao listar sócios:', error);
-        res.status(500).json({ message: 'Erro ao listar sócios.' });
-    }
-};
-
-// Remover sócio por nome e ID da empresa
-const deleteSocio = async (req, res) => {
-    const { id_empresa, nome } = req.body;
-
-    if (!id_empresa || !nome) {
-        return res.status(400).json({
-            message: 'ID da empresa e o nome do sócio são obrigatórios.',
-        });
-    }
-
-    try {
-        const query = 'DELETE FROM socios WHERE id_empresa = $1 AND nome = $2';
-        const result = await pool.query(query, [id_empresa, nome]);
-
-        if (result.rowCount === 0) {
-            return res.status(404).json({ message: 'Sócio não encontrado.' });
+        const { id_empresa } = req.params;
+        if (!id_empresa) {
+            return res.status(400).json({ message: "ID da empresa é obrigatório." });
         }
 
-        res.json({ message: 'Sócio removido com sucesso.' });
+        console.log(`🔹 Buscando sócios para a empresa com ID: ${id_empresa}`);
+
+        const result = await pool.query(
+            "SELECT * FROM socios WHERE id_empresa = $1",
+            [id_empresa]
+        );
+
+        res.status(200).json(result.rows);
     } catch (error) {
-        console.error('Erro ao remover sócio:', error);
-        res.status(500).json({ message: 'Erro ao remover sócio.' });
+        console.error("❌ Erro ao listar sócios:", error);
+        res.status(500).json({ message: "Erro ao buscar sócios." });
     }
 };
+const deleteSocio = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({ message: "ID do sócio é obrigatório." });
+        }
 
+        console.log(`🗑️ Deletando sócio com ID: ${id}`);
+
+        const result = await pool.query("DELETE FROM socios WHERE id = $1 RETURNING *", [id]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Sócio não encontrado." });
+        }
+
+        res.status(200).json({ message: "Sócio deletado com sucesso!" });
+    } catch (error) {
+        console.error("❌ Erro ao deletar sócio:", error);
+        res.status(500).json({ message: "Erro ao deletar sócio." });
+    }
+};
 module.exports = {
     saveSocios,
-    listSociosByEmpresa,
-    deleteSocio,
+    listSociosByEmpresa,  // 🔹 Certifique-se de que esta função está aqui
+    deleteSocio
 };
+
