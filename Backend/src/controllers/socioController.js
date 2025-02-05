@@ -65,26 +65,29 @@ const saveSocios = async (req, res) => {
 };
 
 // 🔹 Função para listar sócios por ID da empresa
-const listSociosByEmpresa = async (req, res) => {
+async function listSociosByEmpresa(req, res) {
     try {
-        const { id_empresa } = req.params;
-        if (!id_empresa) {
-            return res.status(400).json({ message: "ID da empresa é obrigatório." });
+        const idEmpresa = parseInt(req.params.id_empresa, 10);
+        if (isNaN(idEmpresa)) {
+            return res.status(400).json({ error: "ID da empresa inválido" });
+        }
+        
+        console.log("📌 Buscando sócios para empresa com ID:", idEmpresa);
+
+        const query = `SELECT * FROM socios WHERE id_empresa = $1`;
+        const result = await db.query(query, [idEmpresa]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Nenhum sócio encontrado." });
         }
 
-        console.log(`🔹 Buscando sócios para a empresa com ID: ${id_empresa}`);
-
-        const result = await pool.query(
-            "SELECT * FROM socios WHERE id_empresa = $1",
-            [id_empresa]
-        );
-
-        res.status(200).json(result.rows);
+        res.json(result.rows);
     } catch (error) {
         console.error("❌ Erro ao listar sócios:", error);
-        res.status(500).json({ message: "Erro ao buscar sócios." });
+        res.status(500).json({ error: "Erro ao listar sócios" });
     }
-};
+}
+
 const deleteSocio = async (req, res) => {
     try {
         const { id } = req.params;

@@ -69,8 +69,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
     
-    
-
     // Carregar empresas na tabela
     async function carregarEmpresas() {
         try {
@@ -156,35 +154,66 @@ document.addEventListener("DOMContentLoaded", () => {
     // Salvar ou editar uma empresa
     saveEmpresaBtn.addEventListener("click", async () => {
         const id = empresaIdInput.value;
+        
+        // 🔥 Coletar Referências Bancárias do formulário
+        const referenciasBancarias = Array.from(document.querySelectorAll("#referenciasBancariasContainer .banco-item")).map(div => ({
+            banco: div.children[0].value.trim(),
+            agencia: div.children[1].value.trim(),
+            conta: div.children[2].value.trim(),
+            gerente: div.children[3].value.trim(),
+            telefone: div.children[4].value.trim(),
+        }));
+    
+        // 🔥 Coletar Referências Comerciais do formulário
+        const referenciasComerciais = Array.from(document.querySelectorAll("#referenciasComerciaisContainer .comercial-item")).map(div => ({
+            fornecedor: div.children[0].value.trim(),
+            contato: div.children[1].value.trim(),
+            telefone: div.children[2].value.trim(),
+            ramo_atividade: div.children[3].value.trim(),
+        }));
+    
+        // 🔥 Coletar Sócios do formulário
+        const socios = Array.from(document.querySelectorAll("#sociosContainer .socio-item")).map(div => ({
+            nome: div.children[0].value.trim(),
+            email: div.children[1].value.trim(),
+            telefone: div.children[2].value.trim(),
+            endereco: div.children[3].value.trim(),
+            bairro: div.children[4].value.trim(),
+            cidade: div.children[5].value.trim(),
+            uf: div.children[6].value.trim(),
+        }));
+    
+        // Criar o objeto da empresa com os dados coletados
         const empresa = {
-            cnpj: cnpjInput.value,
-            razao_social: razaoSocialInput.value,
-            telefone: telefoneInput.value,
-            referencias_bancarias: referenciasBancariasInput.value ? JSON.parse(referenciasBancariasInput.value) : [],
-            referencias_comerciais: referenciasComerciaisInput.value ? JSON.parse(referenciasComerciaisInput.value) : [],
-            socios: sociosInput.value ? JSON.parse(sociosInput.value) : [],
+            id_empresa: id,
+            cnpj: cnpjInput.value.trim(),
+            razao_social: razaoSocialInput.value.trim(),
+            telefone: telefoneInput.value.trim(),
+            referencias_bancarias: referenciasBancarias,
+            referencias_comerciais: referenciasComerciais,
+            socios: socios,
         };
-
+    
         try {
             const url = id ? `http://localhost:3000/empresa/${id}` : "http://localhost:3000/empresa";
             const method = id ? "PUT" : "POST";
-
+    
             const response = await fetch(url, {
                 method: method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(empresa),
             });
-
+    
             if (!response.ok) throw new Error("Erro ao salvar empresa.");
-            alert("Empresa salva com sucesso!");
+            alert("✅ Empresa salva com sucesso!");
             empresaModal.hide();
             carregarEmpresas();
         } catch (error) {
-            console.error("Erro ao salvar empresa:", error);
+            console.error("❌ Erro ao salvar empresa:", error);
             alert("Erro ao salvar empresa. Verifique o console para mais detalhes.");
         }
     });
-
+    
     // Deletar uma empresa
     window.deletarEmpresa = async (id) => {
         if (confirm("Deseja realmente excluir esta empresa?")) {
@@ -201,18 +230,218 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Editar uma empresa
-    window.editarEmpresa = (empresaEncoded) => {
-        const empresa = JSON.parse(decodeURIComponent(empresaEncoded));
-        empresaIdInput.value = empresa.id_empresa;
-        cnpjInput.value = empresa.cnpj;
-        razaoSocialInput.value = empresa.razao_social;
-        telefoneInput.value = empresa.empresa_telefone || "";
-        referenciasBancariasInput.value = empresa.referencias_bancarias ? JSON.stringify(empresa.referencias_bancarias, null, 2) : "";
-        referenciasComerciaisInput.value = empresa.referencias_comerciais ? JSON.stringify(empresa.referencias_comerciais, null, 2) : "";
-        sociosInput.value = empresa.socios ? JSON.stringify(empresa.socios, null, 2) : "";
-        empresaModal.show();
+    window.editarEmpresa = (empresa) => {
+        try {
+            console.log("📌 Editando empresa:", empresa);
+    
+            // Garante que o modal está aberto antes de preencher os dados
+            empresaModal.show();
+    
+            setTimeout(() => {
+                document.getElementById("empresaId").value = empresa.id_empresa || "";
+                document.getElementById("cnpj").value = empresa.cnpj || "";
+                document.getElementById("razao_social").value = empresa.razao_social || "";
+                document.getElementById("telefone").value = empresa.empresa_telefone || "";
+    
+                // Limpar os containers antes de adicionar os novos inputs
+                document.getElementById("referenciasBancariasContainer").innerHTML = "";
+                document.getElementById("referenciasComerciaisContainer").innerHTML = "";
+                document.getElementById("sociosContainer").innerHTML = "";
+    
+                // Adicionar Referências Bancárias
+                (empresa.referencias_bancarias || []).forEach(ref => {
+                    adicionarReferenciaBancaria(ref);
+                });
+    
+                // Adicionar Referências Comerciais
+                (empresa.referencias_comerciais || []).forEach(ref => {
+                    adicionarReferenciaComercial(ref);
+                });
+    
+                // Adicionar Sócios
+                (empresa.socios || []).forEach(socio => {
+                    adicionarSocio(socio);
+                });
+    
+            }, 300); // Aguarda um pouco para garantir que o modal abriu
+        } catch (error) {
+            console.error("❌ Erro ao carregar os dados para edição:", error);
+            alert("Erro ao carregar os dados para edição. Verifique o console.");
+        }
     };
+    
+    function adicionarReferenciaBancaria(ref = {}) {
+        const container = document.getElementById("referenciasBancariasContainer");
+        
+        const div = document.createElement("div");
+        div.classList.add("banco-item", "card", "p-3", "mb-3");
+        div.innerHTML = `
+            <h5 class="card-title">🏦 Referência Bancária</h5>
+            <input type="text" placeholder="Banco" class="form-control mb-2" value="${ref.banco || ''}">
+            <input type="text" placeholder="Agência" class="form-control mb-2" value="${ref.agencia || ''}">
+            <input type="text" placeholder="Conta" class="form-control mb-2" value="${ref.conta || ''}">
+            <input type="text" placeholder="Gerente" class="form-control mb-2" value="${ref.gerente || ''}">
+            <input type="text" placeholder="Telefone" class="form-control mb-2" value="${ref.telefone || ''}">
+            <button class="btn btn-danger btn-sm" onclick="removerItem(this)">🗑️ Remover</button>
+        `;
+        container.appendChild(div);
+    }
+    
+    function adicionarReferenciaComercial(ref = {}) {
+        const container = document.getElementById("referenciasComerciaisContainer");
+    
+        const div = document.createElement("div");
+        div.classList.add("comercial-item", "card", "p-3", "mb-3");
+        div.innerHTML = `
+            <h5 class="card-title">🏢 Referência Comercial</h5>
+            <input type="text" placeholder="Fornecedor" class="form-control mb-2" value="${ref.fornecedor || ''}">
+            <input type="text" placeholder="Contato" class="form-control mb-2" value="${ref.contato || ''}">
+            <input type="text" placeholder="Telefone" class="form-control mb-2" value="${ref.telefone || ''}">
+            <input type="text" placeholder="Ramo de Atividade" class="form-control mb-2" value="${ref.ramo_atividade || ''}">
+            <button class="btn btn-danger btn-sm" onclick="removerItem(this)">🗑️ Remover</button>
+        `;
+        container.appendChild(div);
+    }
+    
+    function adicionarSocio(socio = {}) {
+        const container = document.getElementById("sociosContainer");
+    
+        const div = document.createElement("div");
+        div.classList.add("socio-item", "card", "p-3", "mb-3");
+        div.innerHTML = `
+            <h5 class="card-title">👥 Sócio</h5>
+            <input type="text" placeholder="Nome" class="form-control mb-2" value="${socio.nome || ''}">
+            <input type="text" placeholder="Email" class="form-control mb-2" value="${socio.email || ''}">
+            <input type="text" placeholder="Telefone" class="form-control mb-2" value="${socio.telefone || ''}">
+            <input type="text" placeholder="Endereço" class="form-control mb-2" value="${socio.endereco || ''}">
+            <input type="text" placeholder="Bairro" class="form-control mb-2" value="${socio.bairro || ''}">
+            <input type="text" placeholder="Cidade" class="form-control mb-2" value="${socio.cidade || ''}">
+            <input type="text" placeholder="UF" class="form-control mb-2" value="${socio.uf || ''}">
+            <button class="btn btn-danger btn-sm" onclick="removerItem(this)">🗑️ Remover</button>
+        `;
+        container.appendChild(div);
+    }
+    
+    function removerItem(button) {
+        button.parentElement.remove();
+    }
+    
+    
+    function removerItem(button) {
+        button.parentElement.remove();
+    }
+    
+    
 
+    function adicionarReferenciaBancaria(ref = {}) {
+        const container = document.getElementById("referenciasBancariasContainer");
+    
+        const div = document.createElement("div");
+        div.classList.add("banco-item");
+        div.innerHTML = `
+            <input type="text" placeholder="Banco" class="form-control mb-2" value="${ref.banco || ''}">
+            <input type="text" placeholder="Agência" class="form-control mb-2" value="${ref.agencia || ''}">
+            <input type="text" placeholder="Conta" class="form-control mb-2" value="${ref.conta || ''}">
+            <input type="text" placeholder="Gerente" class="form-control mb-2" value="${ref.gerente || ''}">
+            <input type="text" placeholder="Telefone" class="form-control mb-2" value="${ref.telefone || ''}">
+            <button class="btn btn-danger btn-sm" onclick="removerItem(this)">🗑️ Remover</button>
+            <hr>
+        `;
+        container.appendChild(div);
+    }
+    
+    function adicionarReferenciaComercial(ref = {}) {
+        const container = document.getElementById("referenciasComerciaisContainer");
+    
+        const div = document.createElement("div");
+        div.classList.add("comercial-item");
+        div.innerHTML = `
+            <input type="text" placeholder="Fornecedor" class="form-control mb-2" value="${ref.fornecedor || ''}">
+            <input type="text" placeholder="Contato" class="form-control mb-2" value="${ref.contato || ''}">
+            <input type="text" placeholder="Telefone" class="form-control mb-2" value="${ref.telefone || ''}">
+            <input type="text" placeholder="Ramo de Atividade" class="form-control mb-2" value="${ref.ramo_atividade || ''}">
+            <button class="btn btn-danger btn-sm" onclick="removerItem(this)">🗑️ Remover</button>
+            <hr>
+        `;
+        container.appendChild(div);
+    }
+    
+    function adicionarSocio(socio = {}) {
+        const container = document.getElementById("sociosContainer");
+    
+        const div = document.createElement("div");
+        div.classList.add("socio-item");
+        div.innerHTML = `
+            <input type="text" placeholder="Nome" class="form-control mb-2" value="${socio.nome || ''}">
+            <input type="text" placeholder="Email" class="form-control mb-2" value="${socio.email || ''}">
+            <input type="text" placeholder="Telefone" class="form-control mb-2" value="${socio.telefone || ''}">
+            <input type="text" placeholder="Endereço" class="form-control mb-2" value="${socio.endereco || ''}">
+            <input type="text" placeholder="Bairro" class="form-control mb-2" value="${socio.bairro || ''}">
+            <input type="text" placeholder="Cidade" class="form-control mb-2" value="${socio.cidade || ''}">
+            <input type="text" placeholder="UF" class="form-control mb-2" value="${socio.uf || ''}">
+            <button class="btn btn-danger btn-sm" onclick="removerItem(this)">🗑️ Remover</button>
+            <hr>
+        `;
+        container.appendChild(div);
+    }
+    
+    function removerItem(button) {
+        button.parentElement.remove();
+    }
+    
+    
+    function adicionarReferenciaComercial(ref = {}, index) {
+        const container = document.getElementById("referenciasComerciaisContainer");
+    
+        const div = document.createElement("div");
+        div.classList.add("comercial-item");
+        div.innerHTML = `
+            <input type="text" placeholder="Fornecedor" class="form-control mb-2" value="${ref.fornecedor || ''}">
+            <input type="text" placeholder="Contato" class="form-control mb-2" value="${ref.contato || ''}">
+            <input type="text" placeholder="Telefone" class="form-control mb-2" value="${ref.telefone || ''}">
+            <input type="text" placeholder="Ramo de Atividade" class="form-control mb-2" value="${ref.ramo_atividade || ''}">
+            <button class="btn btn-danger btn-sm" onclick="removerItem(this)">🗑️ Remover</button>
+            <hr>
+        `;
+        container.appendChild(div);
+    }
+    
+    function adicionarSocio(socio = {}, index) {
+        const container = document.getElementById("sociosContainer");
+    
+        const div = document.createElement("div");
+        div.classList.add("socio-item");
+        div.innerHTML = `
+            <input type="text" placeholder="Nome" class="form-control mb-2" value="${socio.nome || ''}">
+            <input type="text" placeholder="Email" class="form-control mb-2" value="${socio.email || ''}">
+            <input type="text" placeholder="Telefone" class="form-control mb-2" value="${socio.telefone || ''}">
+            <input type="text" placeholder="Endereço" class="form-control mb-2" value="${socio.endereco || ''}">
+            <input type="text" placeholder="Bairro" class="form-control mb-2" value="${socio.bairro || ''}">
+            <input type="text" placeholder="Cidade" class="form-control mb-2" value="${socio.cidade || ''}">
+            <input type="text" placeholder="UF" class="form-control mb-2" value="${socio.uf || ''}">
+            <button class="btn btn-danger btn-sm" onclick="removerItem(this)">🗑️ Remover</button>
+            <hr>
+        `;
+        container.appendChild(div);
+    }
+    function verificarOuCriarContainer(idContainer, parentId) {
+        let container = document.getElementById(idContainer);
+        if (!container) {
+            console.warn(`⚠️ Criando container ${idContainer} pois não foi encontrado no DOM.`);
+            container = document.createElement("div");
+            container.id = idContainer;
+            document.getElementById(parentId).appendChild(container);
+        }
+        return container;
+    }
+    
+    function removerItem(button) {
+        button.parentElement.remove();
+    }
+    const refBancariasContainer = verificarOuCriarContainer("referenciasBancariasContainer", "empresaForm");
+    const refComerciaisContainer = verificarOuCriarContainer("referenciasComerciaisContainer", "empresaForm");
+    const sociosContainer = verificarOuCriarContainer("sociosContainer", "empresaForm");
+    
     // Inicializar o CRUD
     carregarEmpresas();
 });

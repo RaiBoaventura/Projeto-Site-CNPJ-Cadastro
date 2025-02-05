@@ -232,31 +232,40 @@ document.addEventListener("DOMContentLoaded", () => {
     validarFormulario();
 
     // Salvar e continuar
+
     continuarBtn.addEventListener("click", () => {
-        const pessoaJuridica = {
-            cnpj: cnpjInput.value.trim(),
-            razao_social: document.getElementById("razao_social").value.trim(),
-            nome_fantasia: document.getElementById("nome_fantasia").value.trim(),
-            ramo_atividade: document.getElementById("ramo_atividade").value.trim(),
-            data_fundacao: dataFundacaoInput.value.trim(),
-            capital_social: capitalSocialNumInput.value.trim(),
-            telefone: telefoneInput.value.trim(),
-            email: emailInput.value.trim(),
-            logradouro: document.getElementById("logradouro").value.trim(),
-            bairro: document.getElementById("bairro").value.trim(),
-            cidade: document.getElementById("cidade").value.trim(),
-            uf: document.getElementById("uf").value.trim(),
-        };
-    
-        console.log("🟢 Salvando pessoaJuridica no localStorage:", pessoaJuridica);
-    
-        localStorage.setItem("pessoaJuridica", JSON.stringify(pessoaJuridica));
-    
-        // Redireciona para a próxima página
-        window.location.href = "socios.html";  
+    const cnpjFormatado = cnpjInput.value.trim();
+
+    if (!cnpjFormatado || cnpjFormatado.length !== 14) {
+        console.error("❌ CNPJ inválido, não será salvo no localStorage.");
+        return;
+    }
+
+    // Criando um objeto para armazenar corretamente o CNPJ
+    const pessoaJuridica = {
+        cnpj: cnpjFormatado,
+        razao_social: document.getElementById("razao_social").value.trim(),
+        nome_fantasia: document.getElementById("nome_fantasia").value.trim(),
+        ramo_atividade: document.getElementById("ramo_atividade").value.trim(),
+        data_fundacao: dataFundacaoInput.value.trim(),
+        capital_social: capitalSocialNumInput.value.trim(),
+        telefone: telefoneInput.value.trim(),
+        email: emailInput.value.trim(),
+        logradouro: document.getElementById("logradouro").value.trim(),
+        bairro: document.getElementById("bairro").value.trim(),
+        cidade: document.getElementById("cidade").value.trim(),
+        uf: document.getElementById("uf").value.trim(),
+    };
+
+    console.log("🟢 Salvando pessoaJuridica no localStorage:", pessoaJuridica);
+    localStorage.setItem("pessoaJuridica", JSON.stringify(pessoaJuridica));
+
+    // Agora, salvamos o CNPJ corretamente
+    console.log("🟢 Salvando CNPJ no localStorage:", cnpjFormatado);
+    localStorage.setItem("empresaCNPJ", JSON.stringify({ cnpj: cnpjFormatado }));
+
+    // Redireciona para a próxima página
+    window.location.href = "socios.html";  
     });
-    
-    console.log("Salvando CNPJ no localStorage:", cnpj); // Log para verificar o CNPJ sendo salvo
-    localStorage.setItem("empresaCNPJ", JSON.stringify(cnpj));
 
 });
