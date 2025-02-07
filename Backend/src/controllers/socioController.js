@@ -1,4 +1,5 @@
 const pool = require('../models/db'); // Conexão com o banco de dados
+const fetch = require("node-fetch");
 
 const saveSocios = async (req, res) => {
     const { id_empresa, socios } = req.body;
@@ -64,27 +65,53 @@ const saveSocios = async (req, res) => {
     }
 };
 
-// 🔹 Função para listar sócios por ID da empresa
+// 🔹 Buscar os sócios da empresa pelo CNPJ na API externa
 async function listSociosByEmpresa(req, res) {
     try {
-        const idEmpresa = parseInt(req.params.id_empresa, 10);
-        if (isNaN(idEmpresa)) {
-            return res.status(400).json({ error: "ID da empresa inválido" });
-        }
-        
-        console.log("📌 Buscando sócios para empresa com ID:", idEmpresa);
+        const cnpj = req.params.id_empresa; // O parâmetro da URL é o CNPJ
 
-        const query = `SELECT * FROM socios WHERE id_empresa = $1`;
-        const result = await db.query(query, [idEmpresa]);
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({ message: "Nenhum sócio encontrado." });
+        if (!cnpj || cnpj.length !== 14) {
+            return res.status(400).json({ error: "❌ CNPJ inválido." });
         }
 
-        res.json(result.rows);
+        console.log("📡 Buscando dados da empresa pelo CNPJ:", cnpj);
+
+        // 1️⃣ Escolha a API que deseja usar:
+        const urlBrasilAPI = `https://brasilapi.com.br/api/cnpj/v1/${cnpj}`;
+
+        // 🚀 Tente buscar primeiro na BrasilAPI, e caso falhe, tente a ReceitaWS
+        let response;
+        try {
+            response = await fetch(urlBrasilAPI);
+        } catch (error) {
+            console.warn("⚠️ Erro na BrasilAPI. Tentando ReceitaWS...");
+            response = await fetch(urlReceitaWS);
+        }
+
+        if (!response.ok) {
+            throw new Error(`Erro ao buscar dados da API (Status: ${response.status})`);
+        }
+
+        const data = await response.json();
+        console.log("📩 Resposta da API:", data);
+
+        // 2️⃣ Validar se os dados retornaram corretamente
+        if (!data || !data.socios || data.socios.length === 0) {
+            return res.status(404).json({ message: "⚠️ Nenhum sócio encontrado para este CNPJ." });
+        }
+
+        // 3️⃣ Retornar apenas os dados dos sócios ao frontend
+        const socios = data.socios.map((socio) => ({
+            nome: socio.nome_socio || socio.nome || "Não informado",
+            qualificacao: socio.qualificacao_socio || "Desconhecida",
+            cpf_cnpj: socio.cnpj_cpf_do_socio || "Não disponível",
+            pais: socio.codigo_pais || "BR",
+        }));
+
+        res.json(socios);
     } catch (error) {
         console.error("❌ Erro ao listar sócios:", error);
-        res.status(500).json({ error: "Erro ao listar sócios" });
+        res.status(500).json({ error: "Erro ao buscar sócios na API externa." });
     }
 }
 
@@ -111,7 +138,7 @@ const deleteSocio = async (req, res) => {
 };
 module.exports = {
     saveSocios,
-    listSociosByEmpresa,  // 🔹 Certifique-se de que esta função está aqui
+    listSociosByEmpresa, 
     deleteSocio
 };
 
