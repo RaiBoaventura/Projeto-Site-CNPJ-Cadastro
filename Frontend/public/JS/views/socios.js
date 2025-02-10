@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         socioDiv.innerHTML = `
             <h5>Sócio ${index + 1}</h5>
-            ${criarInput("nome", "Nome", socio.nome, index, true, "text", true)} 
+            ${criarInput("nome", "Nome", socio.nome, index, true, "text", false)} 
             ${criarInput("cep", "CEP", socio.cep, index)}
             ${criarInput("endereco", "Endereço", socio.endereco, index)}
             ${criarInput("numero", "Número", socio.numero, index)}
