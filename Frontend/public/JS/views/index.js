@@ -39,6 +39,21 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
     
 
+
+    capitalSocialInput.addEventListener("input", () => {
+        let valor = capitalSocialInput.value.replace(/\D/g, ""); // Remove tudo que não for número
+        let valorNumerico = parseFloat(valor) / 100; // Divide por 100 para representar os centavos
+    
+        if (!isNaN(valorNumerico)) {
+            capitalSocialNumInput.value = valorNumerico.toFixed(2); // Mantém o valor numérico no campo oculto
+            capitalSocialInput.value = valorNumerico.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+            });
+        }
+    });
+    
+
     /**
      * Função para validar todos os campos obrigatórios
      */

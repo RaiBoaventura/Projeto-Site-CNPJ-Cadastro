@@ -327,9 +327,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     
-    function removerItem(button) {
-        button.parentElement.remove();
-    }
     
     
 
@@ -384,10 +381,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         container.appendChild(div);
     }
-    
-    function removerItem(button) {
-        button.parentElement.remove();
-    }
+ 
     
     
     function adicionarReferenciaComercial(ref = {}, index) {
