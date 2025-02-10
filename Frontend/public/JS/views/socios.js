@@ -30,10 +30,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.warn("⚠️ Nenhum sócio encontrado.");
                 return;
             }
-
+            console.log("🔍 Verificando estrutura de sócios:", data.qsa);
+            if (!data.qsa || !Array.isArray(data.qsa) || data.qsa.length === 0) {
+                console.warn("⚠️ Nenhum sócio encontrado ou estrutura inválida.");
+                return;
+            }
+            
             data.qsa.forEach((socio, index) => {
                 const novoSocio = {
-                    nome: socio.nome_socio || "",
+                    nome: socio.nome || "",  // ✅ Usar "socio.nome" e não "socio.nome_socio"
                     cep: "",
                     endereco: "",
                     numero: "",
@@ -44,9 +49,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     email: "",
                 };
                 console.log(`🛠 Criando Sócio ${index + 1}:`, novoSocio);
+            
                 sociosData.push(novoSocio);
-                criarCamposSocio(novoSocio, socioIndex++);
+                criarCamposSocio(novoSocio, index);
             });
+            
 
         } catch (error) {
             console.error("🚨 Erro ao carregar sócios:", error);
