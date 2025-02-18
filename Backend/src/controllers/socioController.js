@@ -78,6 +78,7 @@ async function listSociosByEmpresa(req, res) {
 
         // 1️⃣ Escolha a API que deseja usar:
         const urlBrasilAPI = `https://brasilapi.com.br/api/cnpj/v1/${cnpj}`;
+        const urlReceitaWS = `https://www.receitaws.com.br/v1/cnpj/${cnpj}`;
 
         // 🚀 Tente buscar primeiro na BrasilAPI, e caso falhe, tente a ReceitaWS
         let response;

@@ -133,6 +133,15 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".card").forEach((card, newIndex) => {
             card.id = `socio-${newIndex}`;
             card.querySelector("h5").textContent = `Sócio ${newIndex + 1}`;
+            card.querySelectorAll("input").forEach(input => {
+                const idParts = input.id.split("-");
+                idParts[idParts.length - 1] = newIndex;
+                input.id = idParts.join("-");
+                input.setAttribute("data-index", newIndex);
+            });
+            card.querySelector(".remove-socio-btn").setAttribute("data-index", newIndex);
+            adicionarEventoRemoverSocio(newIndex);
+            adicionarEventoCEP(newIndex);
         });
         socioIndex = sociosData.length;
     }
