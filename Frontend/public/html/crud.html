@@ -49,22 +49,50 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="empresaForm">
-                    <input type="hidden" id="empresaId">
-                    <div class="mb-3">
-                        <label for="cnpj" class="form-label">CNPJ</label>
-                        <input type="text" id="cnpj" class="form-control" required>
+                <!-- Abas para Melhor Organização -->
+                <ul class="nav nav-tabs" id="empresaTabs">
+                    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#dadosGerais">📋 Dados Gerais</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#referencias">🏦 Referências</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#socios">👥 Sócios</a></li>
+                </ul>
+            
+                <div class="tab-content mt-3">
+                    <!-- 🏷️ Aba 1: Dados Gerais -->
+                    <div class="tab-pane fade show active" id="dadosGerais">
+                        <div class="mb-3">
+                            <label for="cnpj" class="form-label">CNPJ</label>
+                            <input type="text" id="cnpj" class="form-control" placeholder="Digite o CNPJ">
+                        </div>
+                        <div class="mb-3">
+                            <label for="razao_social" class="form-label">Razão Social</label>
+                            <input type="text" id="razao_social" class="form-control" placeholder="Nome da empresa">
+                        </div>
+                        <div class="mb-3">
+                            <label for="telefone" class="form-label">Telefone</label>
+                            <input type="text" id="telefone" class="form-control" placeholder="(XX) XXXX-XXXX">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="razao_social" class="form-label">Razão Social</label>
-                        <input type="text" id="razao_social" class="form-control" required>
+            
+                    <!-- 🏦 Aba 2: Referências Bancárias e Comerciais -->
+                    <div class="tab-pane fade" id="referencias">
+                        <h5>🏦 Referências Bancárias</h5>
+                        <button type="button" class="btn btn-sm btn-success mb-2" onclick="adicionarReferenciaBancaria()">+ Adicionar</button>
+                        <div id="referenciasBancariasContainer"></div>
+            
+                        <h5>🏢 Referências Comerciais</h5>
+                        <button type="button" class="btn btn-sm btn-success mb-2" onclick="adicionarReferenciaComercial()">+ Adicionar</button>
+                        <div id="referenciasComerciaisContainer"></div>
                     </div>
-                    <div class="mb-3">
-                        <label for="telefone" class="form-label">Telefone</label>
-                        <input type="text" id="telefone" class="form-control">
+            
+                    <!-- 👥 Aba 3: Sócios -->
+                    <div class="tab-pane fade" id="socios">
+                        <h5>👥 Sócios</h5>
+                        <button type="button" class="btn btn-sm btn-success mb-2" onclick="adicionarSocio()">+ Adicionar</button>
+                        <div id="sociosContainer"></div>
                     </div>
-                </form>
+                </div>
             </div>
+            
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-primary" id="saveEmpresaBtn">Salvar</button>

@@ -68,7 +68,19 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Erro ao exibir os detalhes da empresa.");
         }
     };
-    
+    setTimeout(() => {
+        const tabs = document.querySelectorAll("#empresaTabs a");
+        tabs.forEach(tab => {
+            tab.addEventListener("click", function (event) {
+                event.preventDefault();
+                let activeTab = document.querySelector(".tab-pane.active");
+                activeTab.classList.remove("active", "show");
+                let targetTab = document.querySelector(this.getAttribute("href"));
+                targetTab.classList.add("active", "show");
+            });
+        });
+    }, 500); // Pequeno delay para garantir que tudo esteja carregado corretamente
+
     // Carregar empresas na tabela
     async function carregarEmpresas() {
         try {
@@ -234,41 +246,35 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             console.log("📌 Editando empresa:", empresa);
     
-            // Garante que o modal está aberto antes de preencher os dados
             empresaModal.show();
     
             setTimeout(() => {
+                document.getElementById("empresaModalLabel").textContent = "Editar Empresa"; // Atualiza o título
+                document.getElementById("saveEmpresaBtn").textContent = "Salvar Alterações"; // Altera o botão
                 document.getElementById("empresaId").value = empresa.id_empresa || "";
                 document.getElementById("cnpj").value = empresa.cnpj || "";
                 document.getElementById("razao_social").value = empresa.razao_social || "";
                 document.getElementById("telefone").value = empresa.empresa_telefone || "";
     
-                // Limpar os containers antes de adicionar os novos inputs
+                // Limpa e carrega as referências bancárias
                 document.getElementById("referenciasBancariasContainer").innerHTML = "";
+                (empresa.referencias_bancarias || []).forEach(adicionarReferenciaBancaria);
+    
+                // Limpa e carrega as referências comerciais
                 document.getElementById("referenciasComerciaisContainer").innerHTML = "";
+                (empresa.referencias_comerciais || []).forEach(adicionarReferenciaComercial);
+    
+                // Limpa e carrega os sócios
                 document.getElementById("sociosContainer").innerHTML = "";
+                (empresa.socios || []).forEach(adicionarSocio);
     
-                // Adicionar Referências Bancárias
-                (empresa.referencias_bancarias || []).forEach(ref => {
-                    adicionarReferenciaBancaria(ref);
-                });
-    
-                // Adicionar Referências Comerciais
-                (empresa.referencias_comerciais || []).forEach(ref => {
-                    adicionarReferenciaComercial(ref);
-                });
-    
-                // Adicionar Sócios
-                (empresa.socios || []).forEach(socio => {
-                    adicionarSocio(socio);
-                });
-    
-            }, 300); // Aguarda um pouco para garantir que o modal abriu
+            }, 300);
         } catch (error) {
             console.error("❌ Erro ao carregar os dados para edição:", error);
             alert("Erro ao carregar os dados para edição. Verifique o console.");
         }
     };
+    
     
     function adicionarReferenciaBancaria(ref = {}) {
         const container = document.getElementById("referenciasBancariasContainer");

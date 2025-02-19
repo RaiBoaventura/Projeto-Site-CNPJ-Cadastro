@@ -115,5 +115,3 @@ export function mascararEValidarTelefone(telefone) {
 export function limparValidacao(campo) {
     campo.classList.remove("is-valid", "is-invalid");
 }
-
-

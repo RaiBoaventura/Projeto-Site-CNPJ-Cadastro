@@ -12,6 +12,13 @@ td {
     vertical-align: middle;
     text-align: center;
 }
+.modal-body input {
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin-bottom: 12px;
+    width: 100%;
+    display: block;
+}
 
 .modal {
     z-index: 1055;
