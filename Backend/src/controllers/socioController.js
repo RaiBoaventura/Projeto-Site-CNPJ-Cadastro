@@ -1,4 +1,4 @@
-const pool = require('../models/db'); // Conexão com o banco de dados
+const pool = require('../models/db');
 const fetch = require("node-fetch");
 
 const saveSocios = async (req, res) => {
@@ -15,7 +15,6 @@ const saveSocios = async (req, res) => {
     console.log("🔹 Tentando salvar sócios para a empresa:", id_empresa);
 
     try {
-        // Verificar se a empresa existe antes de inserir os sócios
         const empresaCheck = await pool.query("SELECT id FROM empresa WHERE id = $1", [id_empresa]);
         if (empresaCheck.rows.length === 0) {
             return res.status(404).json({ message: "❌ Empresa não encontrada." });
@@ -65,10 +64,9 @@ const saveSocios = async (req, res) => {
     }
 };
 
-// 🔹 Buscar os sócios da empresa pelo CNPJ na API externa
 async function listSociosByEmpresa(req, res) {
     try {
-        const cnpj = req.params.id_empresa; // O parâmetro da URL é o CNPJ
+        const cnpj = req.params.id_empresa; 
 
         if (!cnpj || cnpj.length !== 14) {
             return res.status(400).json({ error: "❌ CNPJ inválido." });
@@ -76,11 +74,9 @@ async function listSociosByEmpresa(req, res) {
 
         console.log("📡 Buscando dados da empresa pelo CNPJ:", cnpj);
 
-        // 1️⃣ Escolha a API que deseja usar:
         const urlBrasilAPI = `https://brasilapi.com.br/api/cnpj/v1/${cnpj}`;
         const urlReceitaWS = `https://www.receitaws.com.br/v1/cnpj/${cnpj}`;
 
-        // 🚀 Tente buscar primeiro na BrasilAPI, e caso falhe, tente a ReceitaWS
         let response;
         try {
             response = await fetch(urlBrasilAPI);
@@ -96,12 +92,10 @@ async function listSociosByEmpresa(req, res) {
         const data = await response.json();
         console.log("📩 Resposta da API:", data);
 
-        // 2️⃣ Validar se os dados retornaram corretamente
         if (!data || !data.socios || data.socios.length === 0) {
             return res.status(404).json({ message: "⚠️ Nenhum sócio encontrado para este CNPJ." });
         }
 
-        // 3️⃣ Retornar apenas os dados dos sócios ao frontend
         const socios = data.socios.map((socio) => ({
             nome: socio.nome_socio || socio.nome || "Não informado",
             qualificacao: socio.qualificacao_socio || "Desconhecida",

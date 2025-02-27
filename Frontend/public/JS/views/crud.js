@@ -79,50 +79,55 @@ document.addEventListener("DOMContentLoaded", () => {
                 targetTab.classList.add("active", "show");
             });
         });
-    }, 500); // Pequeno delay para garantir que tudo esteja carregado corretamente
+    }, 500); 
 
-    // Carregar empresas na tabela
-    async function carregarEmpresas() {
+    function carregarEmpresas() {
         try {
             console.log("📌 Buscando empresas...");
             
-            const response = await fetch("http://localhost:3000/empresa/vw_empresa_detalhada");
-            if (!response.ok) throw new Error(`Erro ao carregar empresas: ${response.statusText}`);
+            fetch("http://localhost:3000/empresa/vw_empresa_detalhada")
+                .then(response => {
+                    if (!response.ok) throw new Error(`Erro ao carregar empresas: ${response.statusText}`);
+                    return response.json();
+                })
+                .then(empresas => {
+                    const empresaTableBody = document.getElementById("empresaTableBody");
+                    empresaTableBody.innerHTML = "";
     
-            const empresas = await response.json();
-            const empresaTableBody = document.getElementById("empresaTableBody");
-            empresaTableBody.innerHTML = "";
+                    empresas.forEach((empresa) => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${empresa.id_empresa}</td>
+                            <td>${empresa.cnpj}</td>
+                            <td>${empresa.razao_social}</td>
+                            <td>${empresa.empresa_telefone || "-"}</td>
+                            <td>
+                                <button class="btn btn-info btn-sm detalhes-btn" data-empresa='${encodeURIComponent(JSON.stringify(empresa))}'>Detalhes</button>
+                            </td>
+                            <td>
+                                <button class="btn btn-warning btn-sm me-2 editar-btn" data-empresa='${encodeURIComponent(JSON.stringify(empresa))}'>Editar</button>
+                                <button class="btn btn-danger btn-sm deletar-btn" data-id="${empresa.id_empresa}">Excluir</button>
+                            </td>
+                        `;
     
-            empresas.forEach((empresa) => {
-                const row = document.createElement("tr");
+                        empresaTableBody.appendChild(row);
+                    });
     
-                row.innerHTML = `
-                    <td>${empresa.id_empresa}</td>
-                    <td>${empresa.cnpj}</td>
-                    <td>${empresa.razao_social}</td>
-                    <td>${empresa.empresa_telefone || "-"}</td>
-                    <td>
-                        <button class="btn btn-info btn-sm detalhes-btn" data-empresa='${encodeURIComponent(JSON.stringify(empresa))}'>Detalhes</button>
-                    </td>
-                    <td>
-                        <button class="btn btn-warning btn-sm me-2 editar-btn" data-empresa='${encodeURIComponent(JSON.stringify(empresa))}'>Editar</button>
-                        <button class="btn btn-danger btn-sm deletar-btn" data-id="${empresa.id_empresa}">Excluir</button>
-                    </td>
-                `;
+                    console.log("✅ Empresas carregadas com sucesso:", empresas);
     
-                empresaTableBody.appendChild(row);
-            });
-    
-            console.log("✅ Empresas carregadas com sucesso:", empresas);
-    
-            // 🔥 Adicionar eventos dinamicamente após carregar a tabela
-            adicionarEventos();
+                    // 🔥 Adicionar eventos dinamicamente após carregar a tabela
+                    adicionarEventos();
+                })
+                .catch(error => {
+                    console.error("❌ Erro ao carregar empresas:", error);
+                    alert("Erro ao carregar empresas. Verifique se a API está rodando.");
+                });
         } catch (error) {
             console.error("❌ Erro ao carregar empresas:", error);
             alert("Erro ao carregar empresas. Verifique se a API está rodando.");
         }
     }
-    
+     
     function adicionarEventos() {
         document.querySelectorAll(".detalhes-btn").forEach((button) => {
             button.addEventListener("click", () => {
@@ -146,7 +151,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     
-    // Limpar o formulário de empresa
     function limparFormularioEmpresa() {
         cnpjInput.value = "";
         razaoSocialInput.value = "";
@@ -157,43 +161,58 @@ document.addEventListener("DOMContentLoaded", () => {
         empresaIdInput.value = "";
     }
 
-    // Adicionar uma nova empresa
     addEmpresaBtn.addEventListener("click", () => {
         limparFormularioEmpresa();
         empresaModal.show();
     });
-
-    // Salvar ou editar uma empresa
     saveEmpresaBtn.addEventListener("click", async () => {
         const id = empresaIdInput.value;
-        
+    
+        // 🔍 Captura os elementos corretamente antes de processá-los
+        const bancoItems = document.querySelectorAll("#referenciasBancariasContainer .banco-item");
+        const comercialItems = document.querySelectorAll("#referenciasComerciaisContainer .comercial-item");
+        const socioItems = document.querySelectorAll("#sociosContainer .socio-item");
+    
+        if (bancoItems.length === 0) console.warn("🚨 Nenhuma referência bancária encontrada.");
+        if (comercialItems.length === 0) console.warn("🚨 Nenhuma referência comercial encontrada.");
+        if (socioItems.length === 0) console.warn("🚨 Nenhum sócio encontrado.");
+    
         // 🔥 Coletar Referências Bancárias do formulário
-        const referenciasBancarias = Array.from(document.querySelectorAll("#referenciasBancariasContainer .banco-item")).map(div => ({
-            banco: div.children[0].value.trim(),
-            agencia: div.children[1].value.trim(),
-            conta: div.children[2].value.trim(),
-            gerente: div.children[3].value.trim(),
-            telefone: div.children[4].value.trim(),
-        }));
+        const referenciasBancarias = Array.from(bancoItems).map(div => {
+            const inputs = div.querySelectorAll("input");
+            return {
+                banco: inputs[0] ? inputs[0].value.trim() : "",
+                agencia: inputs[1] ? inputs[1].value.trim() : "",
+                conta: inputs[2] ? inputs[2].value.trim() : "",
+                gerente: inputs[3] ? inputs[3].value.trim() : "",
+                telefone: inputs[4] ? inputs[4].value.trim() : "",
+            };
+        });
     
         // 🔥 Coletar Referências Comerciais do formulário
-        const referenciasComerciais = Array.from(document.querySelectorAll("#referenciasComerciaisContainer .comercial-item")).map(div => ({
-            fornecedor: div.children[0].value.trim(),
-            contato: div.children[1].value.trim(),
-            telefone: div.children[2].value.trim(),
-            ramo_atividade: div.children[3].value.trim(),
-        }));
+        const referenciasComerciais = Array.from(comercialItems).map(div => {
+            const inputs = div.querySelectorAll("input");
+            return {
+                fornecedor: inputs[0] ? inputs[0].value.trim() : "",
+                contato: inputs[1] ? inputs[1].value.trim() : "",
+                telefone: inputs[2] ? inputs[2].value.trim() : "",
+                ramo_atividade: inputs[3] ? inputs[3].value.trim() : "",
+            };
+        });
     
         // 🔥 Coletar Sócios do formulário
-        const socios = Array.from(document.querySelectorAll("#sociosContainer .socio-item")).map(div => ({
-            nome: div.children[0].value.trim(),
-            email: div.children[1].value.trim(),
-            telefone: div.children[2].value.trim(),
-            endereco: div.children[3].value.trim(),
-            bairro: div.children[4].value.trim(),
-            cidade: div.children[5].value.trim(),
-            uf: div.children[6].value.trim(),
-        }));
+        const socios = Array.from(socioItems).map(div => {
+            const inputs = div.querySelectorAll("input");
+            return {
+                nome: inputs[0] ? inputs[0].value.trim() : "",
+                email: inputs[1] ? inputs[1].value.trim() : "",
+                telefone: inputs[2] ? inputs[2].value.trim() : "",
+                endereco: inputs[3] ? inputs[3].value.trim() : "",
+                bairro: inputs[4] ? inputs[4].value.trim() : "",
+                cidade: inputs[5] ? inputs[5].value.trim() : "",
+                uf: inputs[6] ? inputs[6].value.trim() : "",
+            };
+        });
     
         // Criar o objeto da empresa com os dados coletados
         const empresa = {
@@ -226,6 +245,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     
+    
+    
     // Deletar uma empresa
     window.deletarEmpresa = async (id) => {
         if (confirm("Deseja realmente excluir esta empresa?")) {
@@ -246,34 +267,51 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             console.log("📌 Editando empresa:", empresa);
     
-            empresaModal.show();
+            // 🔍 Verifica se os campos existem antes de tentar acessá-los
+            const empresaIdInput = document.getElementById("empresaId");
+            const cnpjInput = document.getElementById("cnpj");
+            const razaoSocialInput = document.getElementById("razao_social");
+            const telefoneInput = document.getElementById("telefone");
     
+            if (!empresaIdInput || !cnpjInput || !razaoSocialInput || !telefoneInput) {
+                console.error("❌ ERRO: Algum campo do modal não foi encontrado!");
+                alert("Erro ao abrir o modal de edição. Verifique o console.");
+                return;
+            }
+    
+            // 🛠️ Preenche os campos básicos
+            empresaIdInput.value = empresa.id_empresa || "";
+            cnpjInput.value = empresa.cnpj || "";
+            razaoSocialInput.value = empresa.razao_social || "";
+            telefoneInput.value = empresa.empresa_telefone || "";
+    
+            // 🛠️ Limpa os containers antes de adicionar os dados
+            document.getElementById("referenciasBancariasContainer").innerHTML = "";
+            document.getElementById("referenciasComerciaisContainer").innerHTML = "";
+            document.getElementById("sociosContainer").innerHTML = "";
+    
+            // 🛠️ Adiciona as Referências Bancárias
+            (empresa.referencias_bancarias || []).forEach(ref => adicionarReferenciaBancaria(ref));
+    
+            // 🛠️ Adiciona as Referências Comerciais
+            (empresa.referencias_comerciais || []).forEach(ref => adicionarReferenciaComercial);
+    
+            // 🛠️ Adiciona os Sócios
+            (empresa.socios || []).forEach(socio => adicionarSocio(socio));
+    
+            console.log("✅ Modal de edição preenchido com sucesso!");
+    
+            // 🛠️ Aguarda 200ms antes de abrir o modal
             setTimeout(() => {
-                document.getElementById("empresaModalLabel").textContent = "Editar Empresa"; // Atualiza o título
-                document.getElementById("saveEmpresaBtn").textContent = "Salvar Alterações"; // Altera o botão
-                document.getElementById("empresaId").value = empresa.id_empresa || "";
-                document.getElementById("cnpj").value = empresa.cnpj || "";
-                document.getElementById("razao_social").value = empresa.razao_social || "";
-                document.getElementById("telefone").value = empresa.empresa_telefone || "";
+                empresaModal.show();
+            }, 200);
     
-                // Limpa e carrega as referências bancárias
-                document.getElementById("referenciasBancariasContainer").innerHTML = "";
-                (empresa.referencias_bancarias || []).forEach(adicionarReferenciaBancaria);
-    
-                // Limpa e carrega as referências comerciais
-                document.getElementById("referenciasComerciaisContainer").innerHTML = "";
-                (empresa.referencias_comerciais || []).forEach(adicionarReferenciaComercial);
-    
-                // Limpa e carrega os sócios
-                document.getElementById("sociosContainer").innerHTML = "";
-                (empresa.socios || []).forEach(adicionarSocio);
-    
-            }, 300);
         } catch (error) {
             console.error("❌ Erro ao carregar os dados para edição:", error);
             alert("Erro ao carregar os dados para edição. Verifique o console.");
         }
     };
+    
     
     
     function adicionarReferenciaBancaria(ref = {}) {
@@ -293,21 +331,6 @@ document.addEventListener("DOMContentLoaded", () => {
         container.appendChild(div);
     }
     
-    function adicionarReferenciaComercial(ref = {}) {
-        const container = document.getElementById("referenciasComerciaisContainer");
-    
-        const div = document.createElement("div");
-        div.classList.add("comercial-item", "card", "p-3", "mb-3");
-        div.innerHTML = `
-            <h5 class="card-title">🏢 Referência Comercial</h5>
-            <input type="text" placeholder="Fornecedor" class="form-control mb-2" value="${ref.fornecedor || ''}">
-            <input type="text" placeholder="Contato" class="form-control mb-2" value="${ref.contato || ''}">
-            <input type="text" placeholder="Telefone" class="form-control mb-2" value="${ref.telefone || ''}">
-            <input type="text" placeholder="Ramo de Atividade" class="form-control mb-2" value="${ref.ramo_atividade || ''}">
-            <button class="btn btn-danger btn-sm" onclick="removerItem(this)">🗑️ Remover</button>
-        `;
-        container.appendChild(div);
-    }
     
     function adicionarSocio(socio = {}) {
         const container = document.getElementById("sociosContainer");
@@ -328,53 +351,52 @@ document.addEventListener("DOMContentLoaded", () => {
         container.appendChild(div);
     }
     
-    function removerItem(button) {
+    window.removerItem = function(button) {
         button.parentElement.remove();
-    }
-    
-    
+    };
     
     
 
-    function adicionarReferenciaBancaria(ref = {}) {
+    window.adicionarReferenciaBancaria = function (ref = {}) {
         const container = document.getElementById("referenciasBancariasContainer");
-    
+        
         const div = document.createElement("div");
-        div.classList.add("banco-item");
+        div.classList.add("banco-item", "card", "p-3", "mb-3");
         div.innerHTML = `
+            <h5 class="card-title">🏦 Referência Bancária</h5>
             <input type="text" placeholder="Banco" class="form-control mb-2" value="${ref.banco || ''}">
             <input type="text" placeholder="Agência" class="form-control mb-2" value="${ref.agencia || ''}">
             <input type="text" placeholder="Conta" class="form-control mb-2" value="${ref.conta || ''}">
             <input type="text" placeholder="Gerente" class="form-control mb-2" value="${ref.gerente || ''}">
             <input type="text" placeholder="Telefone" class="form-control mb-2" value="${ref.telefone || ''}">
             <button class="btn btn-danger btn-sm" onclick="removerItem(this)">🗑️ Remover</button>
-            <hr>
         `;
         container.appendChild(div);
-    }
+    };
     
-    function adicionarReferenciaComercial(ref = {}) {
+    window.adicionarReferenciaComercial = function (ref = {}) {
         const container = document.getElementById("referenciasComerciaisContainer");
     
         const div = document.createElement("div");
-        div.classList.add("comercial-item");
+        div.classList.add("comercial-item", "card", "p-3", "mb-3");
         div.innerHTML = `
+            <h5 class="card-title">🏢 Referência Comercial</h5>
             <input type="text" placeholder="Fornecedor" class="form-control mb-2" value="${ref.fornecedor || ''}">
             <input type="text" placeholder="Contato" class="form-control mb-2" value="${ref.contato || ''}">
             <input type="text" placeholder="Telefone" class="form-control mb-2" value="${ref.telefone || ''}">
             <input type="text" placeholder="Ramo de Atividade" class="form-control mb-2" value="${ref.ramo_atividade || ''}">
             <button class="btn btn-danger btn-sm" onclick="removerItem(this)">🗑️ Remover</button>
-            <hr>
         `;
         container.appendChild(div);
-    }
+    };
     
-    function adicionarSocio(socio = {}) {
+    window.adicionarSocio = function (socio = {}) {
         const container = document.getElementById("sociosContainer");
     
         const div = document.createElement("div");
-        div.classList.add("socio-item");
+        div.classList.add("socio-item", "card", "p-3", "mb-3");
         div.innerHTML = `
+            <h5 class="card-title">👥 Sócio</h5>
             <input type="text" placeholder="Nome" class="form-control mb-2" value="${socio.nome || ''}">
             <input type="text" placeholder="Email" class="form-control mb-2" value="${socio.email || ''}">
             <input type="text" placeholder="Telefone" class="form-control mb-2" value="${socio.telefone || ''}">
@@ -383,47 +405,10 @@ document.addEventListener("DOMContentLoaded", () => {
             <input type="text" placeholder="Cidade" class="form-control mb-2" value="${socio.cidade || ''}">
             <input type="text" placeholder="UF" class="form-control mb-2" value="${socio.uf || ''}">
             <button class="btn btn-danger btn-sm" onclick="removerItem(this)">🗑️ Remover</button>
-            <hr>
         `;
         container.appendChild(div);
-    }
- 
-    
-    
-    function adicionarReferenciaComercial(ref = {}, index) {
-        const container = document.getElementById("referenciasComerciaisContainer");
-    
-        const div = document.createElement("div");
-        div.classList.add("comercial-item");
-        div.innerHTML = `
-            <input type="text" placeholder="Fornecedor" class="form-control mb-2" value="${ref.fornecedor || ''}">
-            <input type="text" placeholder="Contato" class="form-control mb-2" value="${ref.contato || ''}">
-            <input type="text" placeholder="Telefone" class="form-control mb-2" value="${ref.telefone || ''}">
-            <input type="text" placeholder="Ramo de Atividade" class="form-control mb-2" value="${ref.ramo_atividade || ''}">
-            <button class="btn btn-danger btn-sm" onclick="removerItem(this)">🗑️ Remover</button>
-            <hr>
-        `;
-        container.appendChild(div);
-    }
-    
-    function adicionarSocio(socio = {}, index) {
-        const container = document.getElementById("sociosContainer");
-    
-        const div = document.createElement("div");
-        div.classList.add("socio-item");
-        div.innerHTML = `
-            <input type="text" placeholder="Nome" class="form-control mb-2" value="${socio.nome || ''}">
-            <input type="text" placeholder="Email" class="form-control mb-2" value="${socio.email || ''}">
-            <input type="text" placeholder="Telefone" class="form-control mb-2" value="${socio.telefone || ''}">
-            <input type="text" placeholder="Endereço" class="form-control mb-2" value="${socio.endereco || ''}">
-            <input type="text" placeholder="Bairro" class="form-control mb-2" value="${socio.bairro || ''}">
-            <input type="text" placeholder="Cidade" class="form-control mb-2" value="${socio.cidade || ''}">
-            <input type="text" placeholder="UF" class="form-control mb-2" value="${socio.uf || ''}">
-            <button class="btn btn-danger btn-sm" onclick="removerItem(this)">🗑️ Remover</button>
-            <hr>
-        `;
-        container.appendChild(div);
-    }
+    };
+
     function verificarOuCriarContainer(idContainer, parentId) {
         let container = document.getElementById(idContainer);
         if (!container) {

@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
         refDiv.innerHTML = template;
         container.appendChild(refDiv);
 
-        // Adicionar validação nos campos criados dinamicamente
         refDiv.querySelectorAll("input, textarea").forEach((input) => {
             input.addEventListener("input", validarFormulario);
         });
@@ -27,7 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
         validarFormulario();
     }
 
-    // Templates de referência
     const comercialTemplate = `
         <h4 class="card-title">Referência Comercial</h4>
         <div class="mb-3">
@@ -82,7 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
         <button type="button" class="btn btn-danger remove-button mt-2">Remover Referência</button>
     `;
 
-    // Validar formulário antes de permitir enviar os dados
     function validarFormulario() {
         const allRequiredFields = document.querySelectorAll(".required-field");
         const allFilled = Array.from(allRequiredFields).every((input) => input.value.trim() !== "");

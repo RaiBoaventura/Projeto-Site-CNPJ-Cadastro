@@ -49,6 +49,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <input type="hidden" id="empresaId">
+
                 <!-- Abas para Melhor Organização -->
                 <ul class="nav nav-tabs" id="empresaTabs">
                     <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#dadosGerais">📋 Dados Gerais</a></li>
@@ -112,6 +114,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        <input type="hidden" id="empresaId"> <!-- 🔥 Corrigido: Adicionado ID da empresa -->
+                        <ul class="nav nav-tabs" id="empresaTabs">
                         <div id="detalhesConteudo"></div>
                     </div>
                     <div class="modal-footer">
