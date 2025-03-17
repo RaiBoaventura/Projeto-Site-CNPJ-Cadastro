@@ -82,6 +82,7 @@ export function validarCampoObrigatorio(campo) {
     campo.classList.add("is-valid");
     return true;
 }
+
 /**
  * Aplica máscara de telefone no formato brasileiro
  * @param {string} telefone - Número de telefone a ser formatado

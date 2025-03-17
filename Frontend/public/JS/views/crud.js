@@ -152,19 +152,42 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     function limparFormularioEmpresa() {
-        cnpjInput.value = "";
-        razaoSocialInput.value = "";
-        telefoneInput.value = "";
-        referenciasBancariasInput.value = "";
-        referenciasComerciaisInput.value = "";
-        sociosInput.value = "";
-        empresaIdInput.value = "";
+        console.log("🛠️ Limpando formulário da empresa...");
+    
+        // Verifica se cada campo existe antes de tentar acessá-lo
+        if (cnpjInput) cnpjInput.value = "";
+        else console.warn("🚨 Campo CNPJ não encontrado!");
+    
+        if (razaoSocialInput) razaoSocialInput.value = "";
+        else console.warn("🚨 Campo Razão Social não encontrado!");
+    
+        if (telefoneInput) telefoneInput.value = "";
+        else console.warn("🚨 Campo Telefone não encontrado!");
+    
+        if (empresaIdInput) empresaIdInput.value = "";
+        else console.warn("🚨 Campo ID da empresa não encontrado!");
+    
+        // Limpa os containers de referências bancárias, comerciais e sócios se existirem
+        const refBancariasContainer = document.getElementById("referenciasBancariasContainer");
+        if (refBancariasContainer) refBancariasContainer.innerHTML = "";
+        else console.warn("🚨 Container de Referências Bancárias não encontrado!");
+    
+        const refComerciaisContainer = document.getElementById("referenciasComerciaisContainer");
+        if (refComerciaisContainer) refComerciaisContainer.innerHTML = "";
+        else console.warn("🚨 Container de Referências Comerciais não encontrado!");
+    
+        const sociosContainer = document.getElementById("sociosContainer");
+        if (sociosContainer) sociosContainer.innerHTML = "";
+        else console.warn("🚨 Container de Sócios não encontrado!");
+    
+        console.log("✅ Formulário limpo com sucesso!");
     }
-
+    
     addEmpresaBtn.addEventListener("click", () => {
         limparFormularioEmpresa();
         empresaModal.show();
     });
+
     saveEmpresaBtn.addEventListener("click", async () => {
         const id = empresaIdInput.value;
     
@@ -245,8 +268,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     
-    
-    
     // Deletar uma empresa
     window.deletarEmpresa = async (id) => {
         if (confirm("Deseja realmente excluir esta empresa?")) {
@@ -311,8 +332,6 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Erro ao carregar os dados para edição. Verifique o console.");
         }
     };
-    
-    
     
     function adicionarReferenciaBancaria(ref = {}) {
         const container = document.getElementById("referenciasBancariasContainer");
