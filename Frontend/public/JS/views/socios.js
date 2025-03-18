@@ -65,26 +65,38 @@ document.addEventListener("DOMContentLoaded", () => {
         const socioDiv = document.createElement("div");
         socioDiv.classList.add("card", "p-4", "mb-4");
         socioDiv.id = `socio-${index}`;
-
+    
         socioDiv.innerHTML = `
             <h5>Sócio ${index + 1}</h5>
-            ${criarInput("nome", "Nome", socio.nome, index, true, "text", false)} 
+            ${criarInput("nome", "Nome", socio.nome, index, true, "text", false)}
             ${criarInput("cep", "CEP", socio.cep, index)}
-            ${criarInput("endereco", "Endereço", socio.endereco, index)}
+            ${criarInput("endereco", "Endereço", socio.endereco, index, true, "text", false)}
             ${criarInput("numero", "Número", socio.numero, index)}
-            ${criarInput("bairro", "Bairro", socio.bairro, index)}
-            ${criarInput("cidade", "Cidade", socio.cidade, index)}
-            ${criarInput("uf", "UF", socio.uf, index)}
+            ${criarInput("bairro", "Bairro", socio.bairro, index, true, "text", false)}
+            ${criarInput("cidade", "Cidade", socio.cidade, index, true, "text", false)}
+            ${criarInput("uf", "UF", socio.uf, index, true, "text", false)}
             ${criarInput("telefone", "Telefone", socio.telefone, index)}
             ${criarInput("email", "Email", socio.email, index, false, "email")}
             <button type="button" class="btn btn-danger remove-socio-btn" data-index="${index}">Remover Sócio</button>
         `;
-
+    
         socioContainer.appendChild(socioDiv);
-        adicionarEventoRemoverSocio(index);
+    
+        // 🔹 Atualiza os valores dos campos no objeto `sociosData` quando o usuário digita
+        socioDiv.querySelectorAll("input").forEach(input => {
+            input.addEventListener("input", (event) => {
+                const field = event.target.id.split("-")[0]; // Identifica o campo (ex: "cep", "endereco")
+                sociosData[index][field] = event.target.value.trim(); // Atualiza no array
+                localStorage.setItem("sociosData", JSON.stringify(sociosData)); // Salva no localStorage
+                console.log(`🔄 Atualizando sócio ${index + 1}:`, sociosData[index]); // Debugging
+            });
+        });
+    
         adicionarEventoCEP(index);
+        adicionarEventoRemoverSocio(index);
     }
-
+    
+    
     function criarInput(id, label, valor, index, required = false, type = "text", readonly = false) {
         return `
             <div class="mb-3">
@@ -97,26 +109,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function adicionarEventoCEP(index) {
         const cepInput = document.getElementById(`cep-socio-${index}`);
+    
         cepInput.addEventListener("blur", async () => {
-            const cep = cepInput.value.replace(/\D/g, "");
-            if (cep.length !== 8) return;
-
+            const cep = cepInput.value.replace(/\D/g, ""); // Remove caracteres não numéricos
+    
+            if (cep.length !== 8) {
+                console.warn(`⚠️ CEP inválido (${cep})`);
+                return;
+            }
+    
             try {
+                console.log(`📡 Buscando endereço para CEP: ${cep}`);
                 const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-                if (!response.ok) throw new Error("Erro ao buscar endereço");
-                const data = await response.json();
-
-                if (!data.erro) {
-                    document.getElementById(`endereco-socio-${index}`).value = data.logradouro || "";
-                    document.getElementById(`bairro-socio-${index}`).value = data.bairro || "";
-                    document.getElementById(`cidade-socio-${index}`).value = data.localidade || "";
-                    document.getElementById(`uf-socio-${index}`).value = data.uf || "";
+    
+                if (!response.ok) {
+                    throw new Error("Erro ao buscar endereço");
                 }
+    
+                const data = await response.json();
+    
+                if (data.erro) {
+                    alert("CEP não encontrado. Preencha os campos manualmente.");
+                    return;
+                }
+    
+                // 🔹 Preencher os campos visíveis no formulário
+                document.getElementById(`endereco-socio-${index}`).value = data.logradouro || "";
+                document.getElementById(`bairro-socio-${index}`).value = data.bairro || "";
+                document.getElementById(`cidade-socio-${index}`).value = data.localidade || "";
+                document.getElementById(`uf-socio-${index}`).value = data.uf || "";
+    
+                // 🔹 Atualizar o array `sociosData`
+                sociosData[index].endereco = data.logradouro || "";
+                sociosData[index].bairro = data.bairro || "";
+                sociosData[index].cidade = data.localidade || "";
+                sociosData[index].uf = data.uf || "";
+    
+                // 🔹 Salvar no `localStorage`
+                localStorage.setItem("sociosData", JSON.stringify(sociosData));
+    
+                console.log("🏡 Endereço atualizado e salvo:", sociosData[index]);
             } catch (error) {
-                console.error("Erro ao buscar CEP:", error);
+                console.error("❌ Erro ao buscar CEP:", error);
+                alert("Erro ao buscar CEP. Tente novamente.");
             }
         });
     }
+    
 
     function adicionarEventoRemoverSocio(index) {
         document.querySelector(`#socio-${index} .remove-socio-btn`).addEventListener("click", () => {

@@ -28,27 +28,34 @@ const saveSocios = async (req, res) => {
 
             const query = `
                 INSERT INTO socios (
-                    id_empresa, nome, endereco, bairro, cidade, uf, telefone, email
-                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                    id_empresa, nome, cep, endereco, numero, bairro, cidade, uf, telefone, email
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
                 ON CONFLICT (id_empresa, nome) DO UPDATE SET
+                    cep = EXCLUDED.cep,
                     endereco = EXCLUDED.endereco,
+                    numero = EXCLUDED.numero,
                     bairro = EXCLUDED.bairro,
                     cidade = EXCLUDED.cidade,
                     uf = EXCLUDED.uf,
                     telefone = EXCLUDED.telefone,
                     email = EXCLUDED.email;
-            `;
-
+        `;
+        
             const values = [
                 id_empresa,
                 socio.nome,
+                socio.cep ?? null,
                 socio.endereco ?? null,
+                socio.numero ?? null,
                 socio.bairro ?? null,
                 socio.cidade ?? null,
                 socio.uf ?? null,
                 socio.telefone ?? null,
-                socio.email ?? null,
+                socio.email ?? null
             ];
+        
+        await pool.query(query, values);
+        
 
             await pool.query(query, values);
             console.log(`✅ Sócio "${socio.nome}" salvo com sucesso!`);

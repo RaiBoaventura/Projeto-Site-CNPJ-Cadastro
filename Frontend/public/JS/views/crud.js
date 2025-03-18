@@ -7,9 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const cnpjInput = document.getElementById("cnpj");
     const razaoSocialInput = document.getElementById("razao_social");
     const telefoneInput = document.getElementById("telefone");
-    const referenciasBancariasInput = document.getElementById("referencias_bancarias");
-    const referenciasComerciaisInput = document.getElementById("referencias_comerciais");
-    const sociosInput = document.getElementById("socios");
+
     const empresaIdInput = document.getElementById("empresaId");
 
     // Exibir os detalhes de uma empresa
@@ -374,8 +372,6 @@ document.addEventListener("DOMContentLoaded", () => {
         button.parentElement.remove();
     };
     
-    
-
     window.adicionarReferenciaBancaria = function (ref = {}) {
         const container = document.getElementById("referenciasBancariasContainer");
         
