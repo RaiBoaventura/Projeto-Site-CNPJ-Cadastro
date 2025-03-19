@@ -1,6 +1,6 @@
-const pool = require('../models/db'); // Conexão com o banco de dados
+const pool = require('../models/db'); 
 
-// Listar todas as empresas
+
 const listEmpresas = async (req, res) => {
     try {
         const query = 'SELECT * FROM empresa ORDER BY id ASC';
@@ -12,7 +12,7 @@ const listEmpresas = async (req, res) => {
     }
 };
 
-// Criar uma nova empresa
+
 const createEmpresa = async (req, res) => {
     const { cnpj, razao_social, telefone } = req.body;
 
@@ -35,7 +35,7 @@ const createEmpresa = async (req, res) => {
     }
 };
 
-// Atualizar uma empresa pelo ID
+
 const updateEmpresa = async (req, res) => {
     const { id } = req.params;
     const { cnpj, razao_social, telefone } = req.body;
@@ -63,7 +63,7 @@ const updateEmpresa = async (req, res) => {
         res.status(500).json({ message: 'Erro ao atualizar empresa.' });
     }
 };
-// 🔹 Função para obter todos os dados da view `vw_empresa_detalhada`
+
 const getEmpresaDetalhada = async (req, res) => {
     try {
         console.log("📌 Buscando dados da view vw_empresa_detalhada...");

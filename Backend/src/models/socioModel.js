@@ -1,6 +1,5 @@
 const pool = require('./db');
 
-// Salvar ou atualizar sócios
 const saveSocio = async (id_empresa, socio) => {
     const query = `
         INSERT INTO socios (
@@ -27,14 +26,12 @@ const saveSocio = async (id_empresa, socio) => {
     await pool.query(query, values);
 };
 
-// Listar sócios por empresa
 const getSociosByEmpresa = async (id_empresa) => {
     const query = 'SELECT * FROM socios WHERE id_empresa = $1 ORDER BY nome ASC';
     const result = await pool.query(query, [id_empresa]);
     return result.rows;
 };
 
-// Deletar sócio
 const deleteSocio = async (id_empresa, nome) => {
     const query = 'DELETE FROM socios WHERE id_empresa = $1 AND nome = $2';
     const result = await pool.query(query, [id_empresa, nome]);

@@ -1,8 +1,7 @@
-const app = require('./src/app'); // Importar o app configurado
+const app = require('./src/app'); 
 
-const PORT = 3000; // Porta onde o servidor vai rodar
+const PORT = 3000; 
 
-// Iniciar o servidor
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
 });

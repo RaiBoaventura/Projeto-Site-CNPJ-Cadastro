@@ -1,6 +1,5 @@
-const pool = require('../models/db'); // Conexão com o banco de dados
+const pool = require('../models/db'); 
 
-// Salvar ou atualizar referências bancárias
 const saveBankReferences = async (req, res) => {
     const { id_empresa, referencias_bancarias } = req.body;
 
@@ -44,7 +43,6 @@ const saveBankReferences = async (req, res) => {
     }
 };
 
-// Salvar ou atualizar referências comerciais
 const saveCommercialReferences = async (req, res) => {
     const { id_empresa, referencias_comerciais } = req.body;
 
@@ -85,7 +83,6 @@ const saveCommercialReferences = async (req, res) => {
     }
 };
 
-// Listar todas as referências bancárias e comerciais de uma empresa
 const listReferencesByEmpresa = async (req, res) => {
     const { id_empresa } = req.params;
 

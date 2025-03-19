@@ -1,6 +1,5 @@
-const fetch = require('node-fetch'); // Biblioteca para chamadas HTTP
+const fetch = require('node-fetch'); 
 
-// Buscar dados de CNPJ na API ReceitaWS
 const fetchCnpjData = async (req, res) => {
     const { cnpj } = req.params;
 
@@ -17,12 +16,11 @@ const fetchCnpjData = async (req, res) => {
 
         const data = await response.json();
 
-        // Verifica se a API retornou erro (exemplo: CNPJ não encontrado)
         if (data.status === 'ERROR') {
             return res.status(404).json({ message: data.message || 'CNPJ não encontrado.' });
         }
 
-        res.json(data); // Retorna os dados recebidos da API
+        res.json(data); 
     } catch (error) {
         console.error('Erro ao buscar dados do CNPJ:', error);
         res.status(500).json({
