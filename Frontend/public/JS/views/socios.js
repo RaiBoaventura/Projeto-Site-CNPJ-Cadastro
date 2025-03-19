@@ -156,7 +156,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     
-
     function adicionarEventoRemoverSocio(index) {
         document.querySelector(`#socio-${index} .remove-socio-btn`).addEventListener("click", () => {
             const elemento = document.getElementById(`socio-${index}`);

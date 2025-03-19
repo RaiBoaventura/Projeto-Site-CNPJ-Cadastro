@@ -1,44 +1,130 @@
-table {
-    border-collapse: collapse;
+/* Estilo geral */
+body {
+    background-color: #000; /* Fundo preto */
+    color: #fff; /* Texto branco para melhor contraste */
+    font-family: Arial, sans-serif;
 }
-
-th {
+#text-muted {
+    color: #FFD700;
+}
+/* Cabeçalhos */
+h1, h2, h5 {
+    color: #FFD700; /* Amarelo dourado */
     text-align: center;
-    background-color: #343a40;
-    color: white;
 }
 
-td {
-    vertical-align: middle;
-    text-align: center;
-}
-.modal-body input {
-    border: 1px solid #ccc;
-    padding: 8px;
-    margin-bottom: 12px;
-    width: 100%;
-    display: block;
+/* Botões */
+.btn-primary {
+    background-color: #FFD700;
+    border-color: #FFD700;
+    color: #000; /* Texto preto para contraste */
+    font-weight: bold;
 }
 
-.modal {
-    z-index: 1055;
-    /* Valor padrão do Bootstrap para modais */
+.btn-primary:hover {
+    background-color: #FFC107;
+    border-color: #FFC107;
 }
 
-.modal-backdrop {
-    z-index: 1050;
-    /* Fundo escuro do modal */
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: #fff;
 }
 
-.modal.show {
-    display: block !important;
-    background-color: rgba(0, 0, 0, 0.5);
-    /* Fundo escuro para o modal */
-    z-index: 1055;
-    /* Certifique-se de que o modal está acima de outros elementos */
+.btn-success:hover {
+    background-color: #218838;
 }
 
-.modal-backdrop {
-    z-index: 1050;
-    /* Fundo do modal */
+.btn-warning {
+    background-color: #FFC107;
+    border-color: #FFC107;
+    color: #000;
+    font-weight: bold;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+}
+
+/* Tabela */
+.table {
+    background-color: #222; /* Cinza escuro */
+    color: #fff;
+}
+.texto-destaque {
+    color: #FFD700 !important; /* Amarelo Dourado */
+    font-weight: bold;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #444;
+}
+
+.table-dark {
+    background-color: #FFD700;
+    color: #000;
+    font-weight: bold;
+}
+
+.table-dark th {
+    background-color: #DAA520;
+}
+
+/* Modal */
+.modal-content {
+    background-color: #222;
+    color: #fff;
+    border: 1px solid #FFD700;
+}
+
+.modal-header {
+    border-bottom: 1px solid #FFD700;
+}
+
+.modal-footer {
+    border-top: 1px solid #FFD700;
+}
+
+/* Inputs */
+.form-control {
+    background-color: #333;
+    color: #FFD700;
+    border: 1px solid #FFD700;
+}
+
+.form-control::placeholder {
+    color: #AAA;
+}
+
+/* Abas */
+.nav-tabs .nav-link {
+    color: #FFD700;
+    background-color: #222;
+    border: 1px solid #FFD700;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #FFD700;
+    color: #000;
+}
+
+/* Cartões */
+.card {
+    background-color: #333;
+    color: #FFD700;
+    border: 1px solid #FFD700;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    h1, h2 {
+        font-size: 1.5rem;
+    }
 }
