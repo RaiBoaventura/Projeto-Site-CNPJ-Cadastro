@@ -6,7 +6,6 @@ const salvarTudo = async (req, res) => {
 
         const { pessoaJuridica, socios, commercialRefs, bankRefs } = req.body;
 
-        // 🚀 Verificação de dados obrigatórios
         if (!pessoaJuridica || !pessoaJuridica.cnpj?.trim() || !pessoaJuridica.razao_social?.trim()) {
             return res.status(400).json({ message: "Os dados da Pessoa Jurídica são obrigatórios." });
         }
@@ -59,7 +58,6 @@ const salvarTudo = async (req, res) => {
             const pessoaId = pessoaResult.rows[0]?.id;
             if (!pessoaId) throw new Error("Falha ao salvar Pessoa Jurídica");
 
-            // 🚀 Salvando Sócios
             for (const socio of socios) {
                 if (!socio.nome?.trim()) {
                     console.log("⚠ Sócio ignorado: Nome vazio");
@@ -85,7 +83,6 @@ const salvarTudo = async (req, res) => {
                 );
             }
 
-            // 🚀 Salvando Referências Comerciais
             for (const ref of commercialRefs) {
                 if (!ref.fornecedor?.trim()) {
                     console.log("⚠ Referência comercial ignorada: Fornecedor vazio");
@@ -100,7 +97,6 @@ const salvarTudo = async (req, res) => {
                 );
             }
 
-            // 🚀 Salvando Referências Bancárias
             for (const ref of bankRefs) {
                 if (!ref.banco?.trim() || !ref.agencia?.trim() || !ref.conta?.trim()) {
                     console.log("⚠ Referência bancária ignorada: Dados obrigatórios ausentes");
