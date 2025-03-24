@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.exibirDetalhes = (empresa) => {
         try {
             if (typeof empresa === "string") {
-                empresa = JSON.parse(decodeURIComponent(empresa)); // 🔥 Corrige se for string JSON
+                empresa = JSON.parse(decodeURIComponent(empresa)); 
             }
     
             console.log("📌 Exibindo detalhes da empresa:", empresa);
@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
                     console.log("✅ Empresas carregadas com sucesso:", empresas);
     
-                    // 🔥 Adicionar eventos dinamicamente após carregar a tabela
+               
                     adicionarEventos();
                 })
                 .catch(error => {
@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function limparFormularioEmpresa() {
         console.log("🛠️ Limpando formulário da empresa...");
     
-        // Verifica se cada campo existe antes de tentar acessá-lo
+        
         if (cnpjInput) cnpjInput.value = "";
         else console.warn("🚨 Campo CNPJ não encontrado!");
     
@@ -165,7 +165,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (empresaIdInput) empresaIdInput.value = "";
         else console.warn("🚨 Campo ID da empresa não encontrado!");
     
-        // Limpa os containers de referências bancárias, comerciais e sócios se existirem
         const refBancariasContainer = document.getElementById("referenciasBancariasContainer");
         if (refBancariasContainer) refBancariasContainer.innerHTML = "";
         else console.warn("🚨 Container de Referências Bancárias não encontrado!");
@@ -189,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
     saveEmpresaBtn.addEventListener("click", async () => {
         const id = empresaIdInput.value;
     
-        // 🔍 Captura os elementos corretamente antes de processá-los
+        
         const bancoItems = document.querySelectorAll("#referenciasBancariasContainer .banco-item");
         const comercialItems = document.querySelectorAll("#referenciasComerciaisContainer .comercial-item");
         const socioItems = document.querySelectorAll("#sociosContainer .socio-item");
@@ -210,7 +209,6 @@ document.addEventListener("DOMContentLoaded", () => {
             };
         });
     
-        // 🔥 Coletar Referências Comerciais do formulário
         const referenciasComerciais = Array.from(comercialItems).map(div => {
             const inputs = div.querySelectorAll("input");
             return {
@@ -221,7 +219,6 @@ document.addEventListener("DOMContentLoaded", () => {
             };
         });
     
-        // 🔥 Coletar Sócios do formulário
         const socios = Array.from(socioItems).map(div => {
             const inputs = div.querySelectorAll("input");
             return {
@@ -235,7 +232,6 @@ document.addEventListener("DOMContentLoaded", () => {
             };
         });
     
-        // Criar o objeto da empresa com os dados coletados
         const empresa = {
             id_empresa: id,
             cnpj: cnpjInput.value.trim(),
@@ -266,7 +262,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     
-    // Deletar uma empresa
     window.deletarEmpresa = async (id) => {
         if (confirm("Deseja realmente excluir esta empresa?")) {
             try {
@@ -281,7 +276,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // Editar uma empresa
     window.editarEmpresa = (empresa) => {
         try {
             console.log("📌 Editando empresa:", empresa);
@@ -298,29 +292,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
     
-            // 🛠️ Preenche os campos básicos
             empresaIdInput.value = empresa.id_empresa || "";
             cnpjInput.value = empresa.cnpj || "";
             razaoSocialInput.value = empresa.razao_social || "";
             telefoneInput.value = empresa.empresa_telefone || "";
     
-            // 🛠️ Limpa os containers antes de adicionar os dados
             document.getElementById("referenciasBancariasContainer").innerHTML = "";
             document.getElementById("referenciasComerciaisContainer").innerHTML = "";
             document.getElementById("sociosContainer").innerHTML = "";
     
-            // 🛠️ Adiciona as Referências Bancárias
             (empresa.referencias_bancarias || []).forEach(ref => adicionarReferenciaBancaria(ref));
-    
-            // 🛠️ Adiciona as Referências Comerciais
+
             (empresa.referencias_comerciais || []).forEach(ref => adicionarReferenciaComercial);
-    
-            // 🛠️ Adiciona os Sócios
+
             (empresa.socios || []).forEach(socio => adicionarSocio(socio));
     
             console.log("✅ Modal de edição preenchido com sucesso!");
-    
-            // 🛠️ Aguarda 200ms antes de abrir o modal
+
             setTimeout(() => {
                 empresaModal.show();
             }, 200);

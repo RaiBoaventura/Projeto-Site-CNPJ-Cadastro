@@ -41,11 +41,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     capitalSocialInput.addEventListener("input", () => {
-        let valor = capitalSocialInput.value.replace(/\D/g, ""); // Remove tudo que não for número
-        let valorNumerico = parseFloat(valor) / 100; // Divide por 100 para representar os centavos
+        let valor = capitalSocialInput.value.replace(/\D/g, ""); 
+        let valorNumerico = parseFloat(valor) / 100; 
     
         if (!isNaN(valorNumerico)) {
-            capitalSocialNumInput.value = valorNumerico.toFixed(2); // Mantém o valor numérico no campo oculto
+            capitalSocialNumInput.value = valorNumerico.toFixed(2);
             capitalSocialInput.value = valorNumerico.toLocaleString("pt-BR", {
                 style: "currency",
                 currency: "BRL",
@@ -58,14 +58,12 @@ document.addEventListener("DOMContentLoaded", () => {
      * Função para validar todos os campos obrigatórios
      */
     function validarFormulario() {
-        // Verifica se os campos obrigatórios estão preenchidos
         const camposValidos = inputsObrigatorios.every((input) => {
-            const preenchido = input && input.value.trim() !== ""; // Basta verificar se está preenchido
+            const preenchido = input && input.value.trim() !== ""; 
             console.log(`Campo ${input.id}: preenchido=${preenchido}`);
-            return preenchido; // Não verifica 'is-valid' aqui
+            return preenchido; 
         });
-    
-        // Verifica se os arquivos obrigatórios estão preenchidos
+
         const contratoValido = contratoInput?.files?.length > 0;
         const cnpjValido = cnpjFileInput?.files?.length > 0;
         const faturamentoValido = faturamentoInput?.files?.length > 0;
@@ -75,12 +73,10 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Faturamento válido:", faturamentoValido);
     
         const arquivosValidos = contratoValido && cnpjValido && faturamentoValido;
-    
-        // Verifica o formulário como um todo
+
         const formularioValido = camposValidos && arquivosValidos;
         console.log("Formulário válido:", formularioValido);
     
-        // Habilita ou desabilita o botão
         continuarBtn.disabled = !formularioValido;
     }
     
@@ -130,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
         [contratoInput, cnpjFileInput, faturamentoInput].forEach((input) => {
             input.addEventListener("change", () => {
                 console.log(`Arquivos selecionados no campo ${input.id}:`, input.files.length);
-                validarFormulario(); // Revalida o formulário após a seleção
+                validarFormulario(); 
             });
         });
         dropZone.addEventListener("click", () => fileInput.click());
@@ -145,25 +141,24 @@ document.addEventListener("DOMContentLoaded", () => {
             dropZone.classList.remove("drag-over");
         
             const arquivos = event.dataTransfer.files;
-            fileInput.files = arquivos; // Vincula os arquivos ao input oculto
+            fileInput.files = arquivos; 
         
-            console.log(`Arquivos no campo ${fileInput.id}:`, arquivos.length); // Verifica se os arquivos estão sendo registrados
-            mostrarArquivos(arquivos); // Exibe os arquivos na interface
-            validarFormulario(); // Revalida o formulário
+            console.log(`Arquivos no campo ${fileInput.id}:`, arquivos.length); 
+            mostrarArquivos(arquivos); 
+            validarFormulario(); 
         });  
     }
 
-    // Configuração de uploads
+
     configurarUpload("contrato-drop-zone", "contrato_Social", "contrato-list");
     configurarUpload("cnpj-drop-zone", "cartao_CNPJ", "cnpj-list");
     configurarUpload("faturamento-drop-zone", "relacao_Faturamento", "faturamento-list");
 
-    // Eventos de validação dos campos de texto
     inputsObrigatorios.forEach((input) => {
         input?.addEventListener("input", validarFormulario);
     });
 
-    // Eventos de validação para telefones
+
     [telefoneInput, telefoneContadorInput].forEach((input) => {
         input.addEventListener("input", () => {
             input.value = mascararEValidarTelefone(input.value) || input.value.replace(/\D/g, "");
@@ -180,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Validação da data de fundação
+
     dataFundacaoInput.addEventListener("blur", () => {
         const data = dataFundacaoInput.value.trim();
         if (!data || new Date(data) > new Date()) {
@@ -192,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
         validarFormulario();
     });
 
-    // Validação do email
+
     emailInput.addEventListener("blur", () => {
         if (!validarEmail(emailInput.value.trim())) {
             emailInput.classList.add("is-invalid");
@@ -202,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Validação do CNPJ
+
     cnpjInput.addEventListener("blur", async () => {
         if (!validarCNPJ(cnpjInput.value.trim())) {
             cnpjInput.classList.add("is-invalid");
@@ -220,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
         validarFormulario();
     });
 
-    // Preencher dados da empresa
+
     function preencherDadosEmpresa(data) {
         document.getElementById("razao_social").value = data.razao_social || "";
         document.getElementById("nome_fantasia").value = data.nome_fantasia || "";
@@ -243,10 +238,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
 
-    // Inicializa o formulário com validação
     validarFormulario();
 
-    // Salvar e continuar
 
     continuarBtn.addEventListener("click", () => {
     const cnpjFormatado = cnpjInput.value.trim();
@@ -256,7 +249,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    // Criando um objeto para armazenar corretamente o CNPJ
     const pessoaJuridica = {
         cnpj: cnpjFormatado,
         razao_social: document.getElementById("razao_social").value.trim(),
@@ -275,11 +267,9 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("🟢 Salvando pessoaJuridica no localStorage:", pessoaJuridica);
     localStorage.setItem("pessoaJuridica", JSON.stringify(pessoaJuridica));
 
-    // Agora, salvamos o CNPJ corretamente
     console.log("🟢 Salvando CNPJ no localStorage:", cnpjFormatado);
     localStorage.setItem("empresaCNPJ", JSON.stringify({ cnpj: cnpjFormatado }));
 
-    // Redireciona para a próxima página
     window.location.href = "socios.html";  
     });
 

@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             data.qsa.forEach((socio, index) => {
                 const novoSocio = {
-                    nome: socio.nome || "",  // ✅ Usar "socio.nome" e não "socio.nome_socio"
+                    nome: socio.nome || "",  
                     cep: "",
                     endereco: "",
                     numero: "",
@@ -82,13 +82,12 @@ document.addEventListener("DOMContentLoaded", () => {
     
         socioContainer.appendChild(socioDiv);
     
-        // 🔹 Atualiza os valores dos campos no objeto `sociosData` quando o usuário digita
         socioDiv.querySelectorAll("input").forEach(input => {
             input.addEventListener("input", (event) => {
-                const field = event.target.id.split("-")[0]; // Identifica o campo (ex: "cep", "endereco")
-                sociosData[index][field] = event.target.value.trim(); // Atualiza no array
-                localStorage.setItem("sociosData", JSON.stringify(sociosData)); // Salva no localStorage
-                console.log(`🔄 Atualizando sócio ${index + 1}:`, sociosData[index]); // Debugging
+                const field = event.target.id.split("-")[0]; 
+                sociosData[index][field] = event.target.value.trim(); 
+                localStorage.setItem("sociosData", JSON.stringify(sociosData)); 
+                console.log(`🔄 Atualizando sócio ${index + 1}:`, sociosData[index]); 
             });
         });
     
@@ -111,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const cepInput = document.getElementById(`cep-socio-${index}`);
     
         cepInput.addEventListener("blur", async () => {
-            const cep = cepInput.value.replace(/\D/g, ""); // Remove caracteres não numéricos
+            const cep = cepInput.value.replace(/\D/g, "");
     
             if (cep.length !== 8) {
                 console.warn(`⚠️ CEP inválido (${cep})`);
@@ -133,19 +132,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
     
-                // 🔹 Preencher os campos visíveis no formulário
                 document.getElementById(`endereco-socio-${index}`).value = data.logradouro || "";
                 document.getElementById(`bairro-socio-${index}`).value = data.bairro || "";
                 document.getElementById(`cidade-socio-${index}`).value = data.localidade || "";
                 document.getElementById(`uf-socio-${index}`).value = data.uf || "";
     
-                // 🔹 Atualizar o array `sociosData`
                 sociosData[index].endereco = data.logradouro || "";
                 sociosData[index].bairro = data.bairro || "";
                 sociosData[index].cidade = data.localidade || "";
                 sociosData[index].uf = data.uf || "";
     
-                // 🔹 Salvar no `localStorage`
                 localStorage.setItem("sociosData", JSON.stringify(sociosData));
     
                 console.log("🏡 Endereço atualizado e salvo:", sociosData[index]);

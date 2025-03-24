@@ -126,59 +126,52 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Preparar e validar payload antes de enviar ao servidor
-    async function salvarDadosNoServidor() {
-        const commercialRefs = Array.from(document.querySelectorAll(".commercial-ref-form")).map((ref) => ({
-            fornecedor: ref.querySelector('input[placeholder="Nome do Fornecedor"]').value.trim(),
-            telefone: ref.querySelector('input[placeholder="Telefone"]').value.trim(),
-            ramo_atividade: ref.querySelector('input[placeholder="Ramo de Atividade"]').value.trim(),
-            contato: ref.querySelector('input[placeholder="Nome do Contato"]').value.trim(),
-        }));
+    function irParaFinalizacao() {
+        console.log("🔄 Salvando dados no localStorage e redirecionando para a finalização...");
     
-        const bankRefs = Array.from(document.querySelectorAll(".bank-ref-form")).map((ref) => ({
-            banco: ref.querySelector('input[placeholder="Nome do Banco"]').value.trim(),
-            agencia: ref.querySelector('input[placeholder="Agência"]').value.trim(),
-            conta: ref.querySelector('input[placeholder="Conta"]').value.trim(),
-            dataAbertura: ref.querySelector('input[type="date"]').value.trim(),
-            telefone: ref.querySelector('input[placeholder="Telefone"]').value.trim(),
-            gerente: ref.querySelector('input[placeholder="Nome do Gerente"]').value.trim(),
-            observacoes: ref.querySelector('textarea[placeholder="Observações"]').value.trim(),
-        }));
+        const commercialRefs = Array.from(document.querySelectorAll(".commercial-ref-form")).map(ref => {
+            return {
+                fornecedor: ref.querySelector('input[placeholder="Nome do Fornecedor"]').value.trim(),
+                telefone: ref.querySelector('input[placeholder="Telefone"]').value.trim(),
+                ramo_atividade: ref.querySelector('input[placeholder="Ramo de Atividade"]').value.trim(),
+                contato: ref.querySelector('input[placeholder="Nome do Contato"]').value.trim(),
+            };
+        }).filter(ref => ref.fornecedor || ref.telefone || ref.ramo_atividade || ref.contato); // Remove referências vazias
     
-        const pessoaJuridica = JSON.parse(localStorage.getItem("pessoaJuridica"));
-        const socios = JSON.parse(localStorage.getItem("sociosData"));
+        const bankRefs = Array.from(document.querySelectorAll(".bank-ref-form")).map(ref => {
+            return {
+                banco: ref.querySelector('input[placeholder="Nome do Banco"]').value.trim(),
+                agencia: ref.querySelector('input[placeholder="Agência"]').value.trim(),
+                conta: ref.querySelector('input[placeholder="Conta"]').value.trim(),
+                dataAbertura: ref.querySelector('input[type="date"]').value.trim(),
+                telefone: ref.querySelector('input[placeholder="Telefone"]').value.trim(),
+                gerente: ref.querySelector('input[placeholder="Nome do Gerente"]').value.trim(),
+                observacoes: ref.querySelector('textarea[placeholder="Observações"]').value.trim(),
+            };
+        }).filter(ref => ref.banco || ref.agencia || ref.conta); // Remove referências vazias
     
-        // 🔥 Verificação extra antes do envio
-        console.log("🟢 Dados recuperados do localStorage:");
-        console.log("📌 Pessoa Jurídica:", pessoaJuridica);
-        console.log("📌 Sócios:", socios);
-        console.log("📌 Referências Comerciais:", commercialRefs);
-        console.log("📌 Referências Bancárias:", bankRefs);
-    
-        // Verificar se pessoaJuridica está vazia
-        if (!pessoaJuridica || Object.keys(pessoaJuridica).length === 0) {
-            alert("Erro: Os dados da empresa não foram carregados corretamente. Por favor, volte e preencha os campos.");
+        // Verificar se os dados foram realmente preenchidos antes de salvar
+        if (commercialRefs.length === 0) {
+            alert("⚠ Adicione pelo menos uma referência comercial antes de continuar.");
             return;
         }
     
-        const payload = { pessoaJuridica, socios, commercialRefs, bankRefs };
-    
-        try {
-            const response = await fetch("http://localhost:3000/api/salvarTudo", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
-    
-            if (!response.ok) throw new Error("Erro ao salvar os dados no servidor.");
-    
-            const result = await response.json();
-            alert(result.message || "Dados salvos com sucesso!");
-            limparDadosLocalStorage();
-        } catch (error) {
-            console.error("Erro ao salvar os dados:", error);
-            alert("Erro ao concluir o cadastro. Tente novamente.");
+        if (bankRefs.length === 0) {
+            alert("⚠ Adicione pelo menos uma referência bancária antes de continuar.");
+            return;
         }
+    
+        // Salvar no localStorage
+        localStorage.setItem("commercialRefs", JSON.stringify(commercialRefs));
+        localStorage.setItem("bankRefs", JSON.stringify(bankRefs));
+    
+        // Verificar se os dados foram armazenados corretamente
+        console.log("✅ Dados armazenados no localStorage:", { commercialRefs, bankRefs });
+    
+        // Redirecionar para a página de finalização
+        window.location.href = "finalizacao.html";
     }
+    
     
 
     function limparDadosLocalStorage() {
@@ -186,6 +179,6 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.removeItem("sociosData");
     }
 
-    concluirCadastroBtn.addEventListener("click", salvarDadosNoServidor);
+    concluirCadastroBtn.addEventListener("click", irParaFinalizacao);
     validarFormulario();
 });

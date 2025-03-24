@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalização do Cadastro</title>
     <link href="/Frontend/bootstrap-5.0.2-dist/css//bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css"> <!-- Adicione um CSS próprio -->
-      <!-- JS Principal -->
-    <script type="module" src="../js/views/finalizacao.js" defer></script>
+    <link rel="stylesheet" href="/Frontend/public/CSS/style.css"> 
+    <script src="../js/views/finalizacao.js" defer></script>
 </head>
 <body>
     <div class="container mt-5">
@@ -38,7 +37,6 @@
             <button id="confirmarCadastro" class="btn btn-primary">Confirmar Cadastro</button>
         </div>
     </div>
-    <!-- Modal de Feedback -->
     <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -47,7 +45,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body" id="feedbackModalBody">
-                <!-- Conteúdo dinâmico será inserido aqui -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
