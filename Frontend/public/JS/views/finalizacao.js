@@ -1,9 +1,19 @@
+// Corrigido finalizacao.js (função carregarDados e envio de payload)
 document.addEventListener("DOMContentLoaded", () => {
     const dadosEmpresaDiv = document.getElementById("dadosEmpresa");
     const dadosSociosDiv = document.getElementById("dadosSocios");
     const dadosComerciaisDiv = document.getElementById("dadosComerciais");
     const dadosBancariasDiv = document.getElementById("dadosBancarias");
     const confirmarCadastroBtn = document.getElementById("confirmarCadastro");
+
+    function removerCamposIncompletos(arr, camposObrigatorios) {
+        return arr.filter(obj =>
+            camposObrigatorios.every(campo => {
+                const val = obj[campo];
+                return val !== null && val !== undefined && String(val).trim() !== "";
+            })
+        );
+    }
 
     function carregarDados() {
         const empresa = JSON.parse(localStorage.getItem("pessoaJuridica")) || {};
@@ -13,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (Object.keys(empresa).length === 0) {
             alert("Nenhum dado encontrado. Volte e preencha os dados.");
-            window.location.href = "index.html"; // Redireciona de volta para a tela de cadastro
+            window.location.href = "index.html"; 
             return;
         }
 
@@ -53,6 +63,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p><strong>Gerente:</strong> ${ref.gerente || "N/A"}</p>
             </div>
         `).join("\n");
+
+        // Logar todos os dados carregados do localStorage
+        console.log("📦 Dados carregados:", {
+            empresa,
+            socios,
+            referenciasComerciais,
+            referenciasBancarias
+        });
     }
 
     confirmarCadastroBtn.addEventListener("click", async () => {
@@ -60,64 +78,53 @@ document.addEventListener("DOMContentLoaded", () => {
         const socios = JSON.parse(localStorage.getItem("sociosData"));
         const referenciasComerciais = JSON.parse(localStorage.getItem("commercialRefs"));
         const referenciasBancarias = JSON.parse(localStorage.getItem("bankRefs"));
-    
-        // 🔥 Função para remover objetos vazios
-        function removerCamposVazios(arr, camposObrigatorios) {
-            return arr.filter(obj => 
-                camposObrigatorios.some(campo => obj[campo] && obj[campo].trim() !== "")
-            );
-        }
-    
-        // Removendo objetos vazios
-        const referenciasComerciaisLimpa = removerCamposVazios(referenciasComerciais, ["fornecedor", "telefone", "ramo", "contato"]);
-        const referenciasBancariasLimpa = removerCamposVazios(referenciasBancarias, ["banco", "agencia", "conta"]);
-    
+
+        const referenciasComerciaisLimpa = removerCamposIncompletos(referenciasComerciais, ["fornecedor", "telefone", "ramo_atividade", "contato"]);
+        const referenciasBancariasLimpa = removerCamposIncompletos(referenciasBancarias, ["banco", "agencia", "conta"]);
+
         const payload = {
-            empresa: {
+            pessoaJuridica: {
                 ...empresa,
-                capital_social: empresa.capital_social ? parseFloat(empresa.capital_social) : null // 🔥 Corrige o formato numérico
+                capital_social: empresa.capital_social ? parseFloat(empresa.capital_social) : null
             },
             socios,
-            referenciasComerciais: referenciasComerciais
-                .filter(ref => ref.fornecedor.trim() !== "") // 🔥 Remove referências vazias
-                .map(ref => ({
-                    fornecedor: ref.fornecedor,
-                    telefone: ref.telefone.replace(/\D/g, ""), // 🔥 Remove caracteres não numéricos
-                    ramo_atividade: ref.ramo_atividade,
-                    contato: ref.contato
-                })),
-            referenciasBancarias: referenciasBancarias
-                .filter(ref => ref.banco.trim() !== "") // 🔥 Remove referências bancárias vazias
-                .map(ref => ({
-                    banco: ref.banco,
-                    agencia: ref.agencia.replace(/\D/g, ""), // 🔥 Apenas números
-                    conta: ref.conta.replace(/\D/g, ""), // 🔥 Apenas números
-                    dataAbertura: ref.dataAbertura ? new Date(ref.dataAbertura).toISOString().split("T")[0] : null, // 🔥 Corrige formato da data
-                    telefone: ref.telefone.replace(/\D/g, ""),
-                    gerente: ref.gerente,
-                    observacoes: ref.observacoes
-                }))
+            referenciasComerciais: referenciasComerciaisLimpa.map(ref => ({
+                fornecedor: ref.fornecedor,
+                telefone: ref.telefone && /\d/.test(ref.telefone) ? ref.telefone.replace(/\D/g, "") : null                ,
+                ramo_atividade: ref.ramo_atividade,
+                contato: ref.contato
+            })),
+            referenciasBancarias: referenciasBancariasLimpa.map(ref => ({
+                banco: ref.banco,
+                agencia: ref.agencia ? String(ref.agencia).replace(/\D/g, "") : null,
+                conta: ref.conta ? String(ref.conta).replace(/\D/g, "") : null,
+                dataAbertura: ref.dataAbertura ? new Date(ref.dataAbertura).toISOString().split("T")[0] : null,
+                telefone: ref.telefone && /\d/.test(ref.telefone) ? ref.telefone.replace(/\D/g, "") : null                ,
+                gerente: ref.gerente,
+                observacoes: ref.observacoes
+            }))
         };
-        
+
         console.log("📤 Enviando payload corrigido:", JSON.stringify(payload, null, 2));
-        
+
         try {
             const response = await fetch("http://localhost:3000/api/salvarTudo", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
+                body: JSON.stringify(payload)
             });
-        
+
             if (!response.ok) throw new Error("Erro ao salvar os dados");
-        
+
             alert("Cadastro finalizado com sucesso!");
             localStorage.clear();
             window.location.href = "sucesso.html";
-        
+
         } catch (error) {
             console.error("Erro ao enviar os dados:", error);
             alert("Erro ao finalizar o cadastro. Tente novamente.");
-        }        
+        }
     });
+
     carregarDados();
 });

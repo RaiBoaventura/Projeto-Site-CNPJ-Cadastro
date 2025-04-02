@@ -26,7 +26,7 @@ const salvarTudo = async (req, res) => {
             await client.query("BEGIN");
 
             console.log("Salvando Pessoa Jurídica...");
-            const pessoaResult = await client.query(
+            const pessoaResult = await client.query( ''
                 `INSERT INTO empresa (
                     cnpj, razao_social, nome_fantasia, inscricao_estadual, ramo_atividade,
                     data_fundacao, capital_social, conta_bancaria, email, site, contador, 

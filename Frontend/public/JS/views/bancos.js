@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const concluirCadastroBtn = document.getElementById("concluirCadastroBtn");
     const MAX_REFERENCES = 3;
 
-    // Adicionar uma referência (comercial ou bancária)
     function adicionarReferencia(container, className, template, maxRefs, alertMsg) {
         const currentRefs = container.querySelectorAll(`.${className}`).length;
         if (currentRefs >= maxRefs) {
@@ -34,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         <div class="mb-3">
             <label class="form-label">Telefone:</label>
-            <input type="text" class="form-control required-field" placeholder="Telefone">
+            <input type="text" class="form-control required-field" placeholder="Telefone do Fornecedor">
         </div>
         <div class="mb-3">
             <label class="form-label">Ramo:</label>
@@ -67,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         <div class="mb-3">
             <label class="form-label">Telefone:</label>
-            <input type="text" class="form-control required-field" placeholder="Telefone">
+            <input type="text" class="form-control required-field" placeholder="Telefone do Gerente">
         </div>
         <div class="mb-3">
             <label class="form-label">Gerente:</label>
@@ -81,12 +80,32 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     function validarFormulario() {
-        const allRequiredFields = document.querySelectorAll(".required-field");
-        const allFilled = Array.from(allRequiredFields).every((input) => input.value.trim() !== "");
-        concluirCadastroBtn.disabled = !allFilled;
+        const comerciais = document.querySelectorAll(".commercial-ref-form");
+        const bancarias = document.querySelectorAll(".bank-ref-form");
+    
+        let comerciaisValidas = false;
+        let bancariasValidas = false;
+    
+        comerciaisValidas = Array.from(comerciais).some(ref => {
+            return (
+                ref.querySelector('input[placeholder="Nome do Fornecedor"]')?.value.trim() &&
+                ref.querySelector('input[placeholder="Telefone do Fornecedor"]')?.value.trim() &&
+                ref.querySelector('input[placeholder="Ramo de Atividade"]')?.value.trim() &&
+                ref.querySelector('input[placeholder="Nome do Contato"]')?.value.trim()
+            );
+        });
+    
+        bancariasValidas = Array.from(bancarias).some(ref => {
+            return (
+                ref.querySelector('input[placeholder="Nome do Banco"]')?.value.trim() &&
+                ref.querySelector('input[placeholder="Agência"]')?.value.trim() &&
+                ref.querySelector('input[placeholder="Conta"]')?.value.trim()
+            );
+        });
+    
+        concluirCadastroBtn.disabled = !(comerciaisValidas && bancariasValidas);
     }
-
-    // Adicionar eventos para adicionar referências comerciais e bancárias
+    
     window.adicionarReferenciaComercial = function () {
         adicionarReferencia(
             commercialRefsContainer,
@@ -107,7 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     };
 
-    // Remover referência comercial
     commercialRefsContainer.addEventListener("click", (event) => {
         if (event.target.classList.contains("remove-button")) {
             const refDiv = event.target.closest(".commercial-ref-form");
@@ -116,7 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Remover referência bancária
     bankRefsContainer.addEventListener("click", (event) => {
         if (event.target.classList.contains("remove-button")) {
             const refDiv = event.target.closest(".bank-ref-form");
@@ -125,18 +142,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Preparar e validar payload antes de enviar ao servidor
     function irParaFinalizacao() {
         console.log("🔄 Salvando dados no localStorage e redirecionando para a finalização...");
     
         const commercialRefs = Array.from(document.querySelectorAll(".commercial-ref-form")).map(ref => {
             return {
                 fornecedor: ref.querySelector('input[placeholder="Nome do Fornecedor"]').value.trim(),
-                telefone: ref.querySelector('input[placeholder="Telefone"]').value.trim(),
+                telefone: ref.querySelector('input[placeholder="Telefone do Fornecedor"]').value.trim(),
                 ramo_atividade: ref.querySelector('input[placeholder="Ramo de Atividade"]').value.trim(),
                 contato: ref.querySelector('input[placeholder="Nome do Contato"]').value.trim(),
             };
-        }).filter(ref => ref.fornecedor || ref.telefone || ref.ramo_atividade || ref.contato); // Remove referências vazias
+        }).filter(ref => ref.fornecedor || ref.telefone || ref.ramo_atividade || ref.contato); 
     
         const bankRefs = Array.from(document.querySelectorAll(".bank-ref-form")).map(ref => {
             return {
@@ -144,13 +160,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 agencia: ref.querySelector('input[placeholder="Agência"]').value.trim(),
                 conta: ref.querySelector('input[placeholder="Conta"]').value.trim(),
                 dataAbertura: ref.querySelector('input[type="date"]').value.trim(),
-                telefone: ref.querySelector('input[placeholder="Telefone"]').value.trim(),
+                telefone: ref.querySelector('input[placeholder="Telefone do Gerente"]').value.trim(),
                 gerente: ref.querySelector('input[placeholder="Nome do Gerente"]').value.trim(),
                 observacoes: ref.querySelector('textarea[placeholder="Observações"]').value.trim(),
             };
-        }).filter(ref => ref.banco || ref.agencia || ref.conta); // Remove referências vazias
+        }).filter(ref => ref.banco || ref.agencia || ref.conta); 
     
-        // Verificar se os dados foram realmente preenchidos antes de salvar
         if (commercialRefs.length === 0) {
             alert("⚠ Adicione pelo menos uma referência comercial antes de continuar.");
             return;
@@ -161,14 +176,12 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
     
-        // Salvar no localStorage
         localStorage.setItem("commercialRefs", JSON.stringify(commercialRefs));
         localStorage.setItem("bankRefs", JSON.stringify(bankRefs));
     
-        // Verificar se os dados foram armazenados corretamente
+
         console.log("✅ Dados armazenados no localStorage:", { commercialRefs, bankRefs });
     
-        // Redirecionar para a página de finalização
         window.location.href = "finalizacao.html";
     }
     
