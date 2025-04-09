@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <button class="btn btn-danger btn-sm deletar-btn" data-id="${empresa.id_empresa}">Excluir</button>
                             </td>
                         `;
-    
+                    
                         empresaTableBody.appendChild(row);
                     });
     
@@ -232,15 +232,18 @@ document.addEventListener("DOMContentLoaded", () => {
             };
         });
     
-        const empresa = {
-            id_empresa: id,
-            cnpj: cnpjInput.value.trim(),
-            razao_social: razaoSocialInput.value.trim(),
-            telefone: telefoneInput.value.trim(),
-            referencias_bancarias: referenciasBancarias,
-            referencias_comerciais: referenciasComerciais,
+        const body = {
+            pessoaJuridica: {
+              id: id ? parseInt(id) : null,
+              cnpj: cnpjInput.value.trim(),
+              razao_social: razaoSocialInput.value.trim(),
+              telefone: telefoneInput.value.trim()
+            },
             socios: socios,
-        };
+            commercialRefs: referenciasComerciais,
+            bankRefs: referenciasBancarias
+          };
+          
     
         try {
             const url = id ? `http://localhost:3000/empresa/${id}` : "http://localhost:3000/empresa";
@@ -249,13 +252,21 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch(url, {
                 method: method,
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(empresa),
+                body: JSON.stringify(body),
             });
-    
-            if (!response.ok) throw new Error("Erro ao salvar empresa.");
+            
+            const result = await response.json();
+            
+            if (!response.ok || result?.erro) {
+                console.error("❌ Backend retornou erro:", result);
+                throw new Error(result?.mensagem || "Erro ao salvar empresa.");
+            }
+            
+            console.log("✅ Empresa salva:", result);
             alert("✅ Empresa salva com sucesso!");
             empresaModal.hide();
             carregarEmpresas();
+            
         } catch (error) {
             console.error("❌ Erro ao salvar empresa:", error);
             alert("Erro ao salvar empresa. Verifique o console para mais detalhes.");
@@ -303,7 +314,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
             (empresa.referencias_bancarias || []).forEach(ref => adicionarReferenciaBancaria(ref));
 
-            (empresa.referencias_comerciais || []).forEach(ref => adicionarReferenciaComercial);
+            (empresa.referencias_comerciais || []).forEach(ref => adicionarReferenciaComercial(ref));
 
             (empresa.socios || []).forEach(socio => adicionarSocio(socio));
     

@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const contratoInput = document.getElementById("contrato_Social");
     const cnpjFileInput = document.getElementById("cartao_CNPJ");
     const faturamentoInput = document.getElementById("relacao_Faturamento");
-
     const inputsObrigatorios = [
         "cnpj",
         "razao_social",
@@ -38,8 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("relacao_Faturamento")
     ];
     
-
-
     capitalSocialInput.addEventListener("input", () => {
         let valor = capitalSocialInput.value.replace(/\D/g, ""); 
         let valorNumerico = parseFloat(valor) / 100; 
@@ -53,7 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     
-
     /**
      * Função para validar todos os campos obrigatórios
      */
@@ -80,8 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
         continuarBtn.disabled = !formularioValido;
     }
     
-    
-
     /**
      * Função para configurar o drag-and-drop e validação dos arquivos
      */
@@ -149,7 +143,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });  
     }
 
-
     configurarUpload("contrato-drop-zone", "contrato_Social", "contrato-list");
     configurarUpload("cnpj-drop-zone", "cartao_CNPJ", "cnpj-list");
     configurarUpload("faturamento-drop-zone", "relacao_Faturamento", "faturamento-list");
@@ -157,7 +150,6 @@ document.addEventListener("DOMContentLoaded", () => {
     inputsObrigatorios.forEach((input) => {
         input?.addEventListener("input", validarFormulario);
     });
-
 
     [telefoneInput, telefoneContadorInput].forEach((input) => {
         input.addEventListener("input", () => {
@@ -175,7 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-
     dataFundacaoInput.addEventListener("blur", () => {
         const data = dataFundacaoInput.value.trim();
         if (!data || new Date(data) > new Date()) {
@@ -187,7 +178,6 @@ document.addEventListener("DOMContentLoaded", () => {
         validarFormulario();
     });
 
-
     emailInput.addEventListener("blur", () => {
         if (!validarEmail(emailInput.value.trim())) {
             emailInput.classList.add("is-invalid");
@@ -196,7 +186,6 @@ document.addEventListener("DOMContentLoaded", () => {
             emailInput.classList.add("is-valid");
         }
     });
-
 
     cnpjInput.addEventListener("blur", async () => {
         if (!validarCNPJ(cnpjInput.value.trim())) {
@@ -214,7 +203,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         validarFormulario();
     });
-
 
     function preencherDadosEmpresa(data) {
         document.getElementById("razao_social").value = data.razao_social || "";
@@ -237,9 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("email").value = data.email || "";
     }
     
-
     validarFormulario();
-
 
     continuarBtn.addEventListener("click", () => {
     const cnpjFormatado = cnpjInput.value.trim();
@@ -272,5 +258,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.location.href = "socios.html";  
     });
-
 });
