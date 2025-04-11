@@ -246,14 +246,14 @@ document.addEventListener("DOMContentLoaded", () => {
           
     
         try {
-            const url = id ? `http://localhost:3000/empresa/${id}` : "http://localhost:3000/empresa";
             const method = id ? "PUT" : "POST";
-    
-            const response = await fetch(url, {
-                method: method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body),
+
+            const response = await fetch("http://localhost:3000/api/salvarTudo/empresa", {
+             method,
+             headers: { "Content-Type": "application/json" },
+             body: JSON.stringify(body),
             });
+
             
             const result = await response.json();
             

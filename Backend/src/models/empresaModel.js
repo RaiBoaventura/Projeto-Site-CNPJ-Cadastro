@@ -34,9 +34,24 @@ const deleteEmpresa = async (id) => {
     return result.rowCount;
 };
 
+const salvarOuAtualizar = async (pessoaJuridica) => {
+    const { id, cnpj, razao_social, telefone } = pessoaJuridica;
+
+    if (id) {
+        await updateEmpresa(id, cnpj, razao_social, telefone);
+        return id;
+    } else {
+        const result = await createEmpresa(cnpj, razao_social, telefone);
+        return result.id;
+    }
+};
+
 module.exports = {
     getAllEmpresas,
     createEmpresa,
     updateEmpresa,
     deleteEmpresa,
+    salvarOuAtualizar // 👈 tem que estar exatamente assim
 };
+
+

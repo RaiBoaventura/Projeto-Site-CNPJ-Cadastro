@@ -1,4 +1,5 @@
 const pool = require('../models/db');
+const empresaModel = require("../models/empresaModel");
 
 const salvarTudo = async (req, res) => {
     try {
@@ -25,38 +26,95 @@ const salvarTudo = async (req, res) => {
         try {
             await client.query("BEGIN");
 
-            console.log("Salvando Pessoa Jurídica...");
-            const pessoaResult = await client.query( ''
-                `INSERT INTO empresa (
-                    cnpj, razao_social, nome_fantasia, inscricao_estadual, ramo_atividade,
-                    data_fundacao, capital_social, conta_bancaria, email, site, contador, 
-                    logradouro, numero_complemento, bairro, cidade, uf, telefone, telefone_contador
-                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
-                RETURNING id`,
-                [
-                    pessoaJuridica.cnpj,
-                    pessoaJuridica.razao_social,
-                    pessoaJuridica.nome_fantasia ?? null,
-                    pessoaJuridica.inscricao_estadual ?? null,
-                    pessoaJuridica.ramo_atividade ?? null,
-                    pessoaJuridica.data_fundacao ?? null,
-                    pessoaJuridica.capital_social ?? null,
-                    pessoaJuridica.conta_bancaria ?? null,
-                    pessoaJuridica.email ?? null,
-                    pessoaJuridica.site ?? null,
-                    pessoaJuridica.contador ?? null,
-                    pessoaJuridica.logradouro ?? null,
-                    pessoaJuridica.numero_complemento ?? null,
-                    pessoaJuridica.bairro ?? null,
-                    pessoaJuridica.cidade ?? null,
-                    pessoaJuridica.uf ?? null,
-                    pessoaJuridica.telefone ?? null,
-                    pessoaJuridica.telefone_contador ?? null
-                ]
+            console.log("Verificando se a empresa já existe...");
+            const checkEmpresa = await client.query(
+                `SELECT id FROM empresa WHERE cnpj = $1`,
+                [pessoaJuridica.cnpj]
             );
-
-            const pessoaId = pessoaResult.rows[0]?.id;
-            if (!pessoaId) throw new Error("Falha ao salvar Pessoa Jurídica");
+            
+            let pessoaId;
+            
+            if (checkEmpresa.rows.length > 0) {
+                pessoaId = checkEmpresa.rows[0].id;
+                console.log(`Empresa existente encontrada (ID: ${pessoaId}). Atualizando...`);
+                
+                await client.query(
+                    `UPDATE empresa SET 
+                        razao_social = $1,
+                        nome_fantasia = $2,
+                        inscricao_estadual = $3,
+                        ramo_atividade = $4,
+                        data_fundacao = $5,
+                        capital_social = $6,
+                        conta_bancaria = $7,
+                        email = $8,
+                        site = $9,
+                        contador = $10,
+                        logradouro = $11,
+                        numero_complemento = $12,
+                        bairro = $13,
+                        cidade = $14,
+                        uf = $15,
+                        telefone = $16,
+                        telefone_contador = $17
+                    WHERE cnpj = $18`,
+                    [
+                        pessoaJuridica.razao_social,
+                        pessoaJuridica.nome_fantasia ?? null,
+                        pessoaJuridica.inscricao_estadual ?? null,
+                        pessoaJuridica.ramo_atividade ?? null,
+                        pessoaJuridica.data_fundacao ?? null,
+                        pessoaJuridica.capital_social ?? null,
+                        pessoaJuridica.conta_bancaria ?? null,
+                        pessoaJuridica.email ?? null,
+                        pessoaJuridica.site ?? null,
+                        pessoaJuridica.contador ?? null,
+                        pessoaJuridica.logradouro ?? null,
+                        pessoaJuridica.numero_complemento ?? null,
+                        pessoaJuridica.bairro ?? null,
+                        pessoaJuridica.cidade ?? null,
+                        pessoaJuridica.uf ?? null,
+                        pessoaJuridica.telefone ?? null,
+                        pessoaJuridica.telefone_contador ?? null,
+                        pessoaJuridica.cnpj
+                    ]
+                );
+            
+            } else {
+                console.log("Empresa nova. Inserindo...");
+                const pessoaResult = await client.query(
+                    `INSERT INTO empresa (
+                        cnpj, razao_social, nome_fantasia, inscricao_estadual, ramo_atividade,
+                        data_fundacao, capital_social, conta_bancaria, email, site, contador, 
+                        logradouro, numero_complemento, bairro, cidade, uf, telefone, telefone_contador
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+                    RETURNING id`,
+                    [
+                        pessoaJuridica.cnpj,
+                        pessoaJuridica.razao_social,
+                        pessoaJuridica.nome_fantasia ?? null,
+                        pessoaJuridica.inscricao_estadual ?? null,
+                        pessoaJuridica.ramo_atividade ?? null,
+                        pessoaJuridica.data_fundacao ?? null,
+                        pessoaJuridica.capital_social ?? null,
+                        pessoaJuridica.conta_bancaria ?? null,
+                        pessoaJuridica.email ?? null,
+                        pessoaJuridica.site ?? null,
+                        pessoaJuridica.contador ?? null,
+                        pessoaJuridica.logradouro ?? null,
+                        pessoaJuridica.numero_complemento ?? null,
+                        pessoaJuridica.bairro ?? null,
+                        pessoaJuridica.cidade ?? null,
+                        pessoaJuridica.uf ?? null,
+                        pessoaJuridica.telefone ?? null,
+                        pessoaJuridica.telefone_contador ?? null
+                    ]
+                );
+            
+                pessoaId = pessoaResult.rows[0]?.id;
+                if (!pessoaId) throw new Error("Falha ao inserir Pessoa Jurídica");
+            }
+            
 
             for (const socio of socios) {
                 if (!socio.nome?.trim()) {

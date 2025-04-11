@@ -4,9 +4,8 @@ const { salvarTudo } = require("../controllers/salvarTudoController");
 
 console.log("Arquivo salvarTudoRoutes.js carregado.");
 
-router.post("/", (req, res) => {
-    console.log("Rota /api/salvarTudo foi acessada.");
-    salvarTudo(req, res);
-});
+// POST e PUT para a mesma rota
+router.post("/empresa", salvarTudo);
+router.put("/empresa", salvarTudo);
 
 module.exports = router;
