@@ -1,52 +1,47 @@
-/* === Reset e Fonte Base === */
+/* === Base e Fonte === */
 body {
-    background-color: #0e0e0e;
-    color: #f9d923;
+    background-color: #111;
+    color: #d4af37;
     font-family: 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     padding: 0;
   }
   
   h1, h2, h5, .modal-title {
-    color: #f9d923;
+    color: #d4af37;
     font-weight: 700;
     text-shadow: 1px 1px 2px #000;
   }
   
   .text-muted {
-    color: #cccccc !important;
-  }
-  
-  /* === Container Principal === */
-  .container {
-    padding-top: 30px;
+    color: #999 !important;
   }
   
   /* === Tabela === */
   .table {
-    background-color: #161616;
-    border: none;
-    color: #f9d923;
+    background-color: #181818;
+    color: #d4af37;
     border-radius: 8px;
     overflow: hidden;
   }
   
   .table thead {
     background-color: #222;
-    border-bottom: 2px solid #f9d923;
+    border-bottom: 2px solid #bfa843;
   }
   
   .table th, .table td {
-    border: none;
+    border: 1px solid #2e2e2e;
     padding: 12px 16px;
   }
   
-  .table tbody tr {
-    transition: background-color 0.2s ease;
+  .table tbody tr:hover {
+    background-color: #222;
+    color: #ffeaa7;
   }
   
-  .table tbody tr:hover {
-    background-color: #1f1f1f;
+  .table tbody tr:hover td {
+    color: #ffeaa7 !important;
   }
   
   /* === Botões === */
@@ -57,28 +52,28 @@ body {
   }
   
   .btn-primary {
-    background-color: #f9d923;
-    color: #000;
+    background-color: #d4af37;
+    color: #111;
     border: none;
   }
   
   .btn-primary:hover {
-    background-color: #e6c100;
+    background-color: #c39d26;
   }
   
   .btn-warning {
-    background-color: #f39c12;
+    background-color: #e0a938;
+    color: #111;
     border: none;
-    color: #000;
   }
   
   .btn-warning:hover {
-    background-color: #d78c0c;
+    background-color: #c18f21;
   }
   
   .btn-danger {
     background-color: #e74c3c;
-    color: white;
+    color: #fff;
     border: none;
   }
   
@@ -87,60 +82,79 @@ body {
   }
   
   .btn-info {
-    background-color: #ffdc52;
-    color: #000;
+    background-color: #f2d46e;
+    color: #111;
     border: none;
   }
   
   .btn-info:hover {
-    background-color: #f9d923;
+    background-color: #d4af37;
   }
   
-  /* === Inputs e Forms === */
+  /* === Inputs e Placeholders === */
   input.form-control,
-  textarea.form-control {
-    background-color: #1b1b1b;
-    border: 1px solid #f9d923;
-    color: #f9d923;
+  textarea.form-control,
+  select.form-control {
+    background-color: #1a1a1a;
+    border: 1px solid #bfa843;
+    color: #ffeaa7;
     border-radius: 6px;
   }
   
-  input.form-control:focus {
-    background-color: #101010;
-    border-color: #f9d923;
-    box-shadow: 0 0 5px #f9d92388;
+  input.form-control:focus,
+  textarea.form-control:focus,
+  select.form-control:focus {
+    background-color: #1a1a1a;
+    border-color: #ffeaa7;
+    box-shadow: 0 0 0 0.2rem rgba(255, 234, 167, 0.2);
+  }
+  
+  /* Placeholder com visibilidade total e contraste */
+  input::placeholder,
+  textarea::placeholder,
+  input::-webkit-input-placeholder,
+  textarea::-webkit-input-placeholder,
+  input:-ms-input-placeholder,
+  textarea:-ms-input-placeholder,
+  input::-ms-input-placeholder,
+  textarea::-ms-input-placeholder {
+    color: #ffeaa7 !important;
+    opacity: 1 !important;
   }
   
   /* === Nav Tabs === */
   .nav-tabs .nav-link {
-    color: #f9d923;
+    color: #d4af37;
     background-color: #1a1a1a;
-    border: 1px solid #f9d923;
+    border: 1px solid #bfa843;
     margin-right: 4px;
     border-radius: 6px 6px 0 0;
   }
   
   .nav-tabs .nav-link.active {
-    background-color: #000;
-    color: #f9d923;
+    background-color: #111;
+    color: #ffeaa7;
     border-bottom-color: transparent;
   }
   
-  /* === Cards Internos === */
+  .nav-tabs .nav-link:hover {
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+  }
+  
+  /* === Card === */
   .card {
-    background-color: #181818;
-    border: 1px solid #f9d923;
-    color: #f9d923;
+    background-color: #1a1a1a;
+    border: 1px solid #bfa843;
+    color: #d4af37;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(249, 217, 35, 0.1);
   }
   
   /* === Modal === */
   .modal-content {
     background-color: #141414;
-    border: 1px solid #f9d923;
+    border: 1px solid #bfa843;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(249, 217, 35, 0.2);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
   }
   
   .modal-header,
@@ -148,17 +162,12 @@ body {
     border-color: #292929;
   }
   
-  /* === Fechar Modal (X) === */
+  /* === Botão Fechar (X) === */
   .btn-close {
-    filter: invert(100%);
+    filter: invert(80%);
   }
   
-  /* === Animação Hover Light === */
-  button:hover, .nav-tabs .nav-link:hover {
-    box-shadow: 0 0 10px rgba(249, 217, 35, 0.5);
-  }
-  
-  /* === Responsividade === */
+  /* === Responsivo === */
   @media (max-width: 768px) {
     .table th, .table td {
       font-size: 14px;
@@ -169,23 +178,54 @@ body {
       font-size: 1.5rem;
     }
   }
+  /* === Placeholder visível e legível no dark === */
+input::placeholder,
+textarea::placeholder,
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder,
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder,
+input::-ms-input-placeholder,
+textarea::-ms-input-placeholder {
+  color: #ffeaa7 !important; /* amarelo claro suave */
+  opacity: 1 !important;     /* visibilidade total */
+  font-weight: 500;
+}
+/* === Estilo de placeholder visível e elegante === */
+input::placeholder,
+textarea::placeholder {
+  color: #f5d76e !important;      /* Amarelo claro visível */
+  opacity: 1 !important;
+  font-weight: 500 !important;
+}
 
-  /* Corrige o hover escurecido da tabela */
-.table tbody tr:hover {
-    background-color: #222222 !important; /* fundo mais claro no hover */
-    color: #f9d923 !important;            /* garante visibilidade do texto */
-  }
-  
-  /* Garante que todas as células também herdem a cor visível */
-  .table tbody tr:hover td {
-    color: #f9d923 !important;
-  }
-  
-  /* Evita que botões fiquem com sombra escura em hover */
-  .btn:focus,
-  .btn:hover {
-    box-shadow: 0 0 6px rgba(249, 217, 35, 0.3) !important;
-    color: #000 !important;
-  }
-  
-  
+input:focus::placeholder,
+textarea:focus::placeholder {
+  color: #f5d76e !important;
+  opacity: 0.8 !important;
+}
+
+/* === Suporte total cross-browser === */
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: #f5d76e !important;
+  opacity: 1 !important;
+}
+
+input:-moz-placeholder,
+textarea:-moz-placeholder {
+  color: #f5d76e !important;
+  opacity: 1 !important;
+}
+
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+  color: #f5d76e !important;
+  opacity: 1 !important;
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  color: #f5d76e !important;
+  opacity: 1 !important;
+}
