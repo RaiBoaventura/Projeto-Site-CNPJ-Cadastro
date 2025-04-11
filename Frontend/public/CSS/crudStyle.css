@@ -104,10 +104,12 @@ body {
   input.form-control:focus,
   textarea.form-control:focus,
   select.form-control:focus {
-    background-color: #1a1a1a;
-    border-color: #ffeaa7;
-    box-shadow: 0 0 0 0.2rem rgba(255, 234, 167, 0.2);
+      background-color: #2a2a2a; /* Um pouco mais claro */
+      border-color: #ffeaa7;
+      color: #ffeaa7;
+      box-shadow: 0 0 0 0.2rem rgba(255, 234, 167, 0.2);
   }
+  
   
   /* Placeholder com visibilidade total e contraste */
   input::placeholder,
