@@ -1,92 +1,191 @@
-/* General Reset */
-* {
+/* === Reset e Fonte Base === */
+body {
+    background-color: #0e0e0e;
+    color: #f9d923;
+    font-family: 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
-    line-height: 1.6;
-    padding: 20px;
-}
-
-/* Container */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Header */
-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-header h1 {
-    font-size: 2.5rem;
-    color: #4CAF50;
-}
-
-/* Table */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-}
-
-table th, table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-table th {
-    background-color: #4CAF50;
-    color: white;
-}
-
-table tr:hover {
-    background-color: #f1f1f1;
-}
-
-/* Buttons */
-button {
-    padding: 10px 15px;
-    font-size: 1rem;
-    color: #fff;
-    background-color: #4CAF50;
+  }
+  
+  h1, h2, h5, .modal-title {
+    color: #f9d923;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px #000;
+  }
+  
+  .text-muted {
+    color: #cccccc !important;
+  }
+  
+  /* === Container Principal === */
+  .container {
+    padding-top: 30px;
+  }
+  
+  /* === Tabela === */
+  .table {
+    background-color: #161616;
     border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+    color: #f9d923;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .table thead {
+    background-color: #222;
+    border-bottom: 2px solid #f9d923;
+  }
+  
+  .table th, .table td {
+    border: none;
+    padding: 12px 16px;
+  }
+  
+  .table tbody tr {
+    transition: background-color 0.2s ease;
+  }
+  
+  .table tbody tr:hover {
+    background-color: #1f1f1f;
+  }
+  
+  /* === Botões === */
+  .btn {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: 0.2s ease-in-out;
+  }
+  
+  .btn-primary {
+    background-color: #f9d923;
+    color: #000;
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: #e6c100;
+  }
+  
+  .btn-warning {
+    background-color: #f39c12;
+    border: none;
+    color: #000;
+  }
+  
+  .btn-warning:hover {
+    background-color: #d78c0c;
+  }
+  
+  .btn-danger {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+  }
+  
+  .btn-danger:hover {
+    background-color: #c0392b;
+  }
+  
+  .btn-info {
+    background-color: #ffdc52;
+    color: #000;
+    border: none;
+  }
+  
+  .btn-info:hover {
+    background-color: #f9d923;
+  }
+  
+  /* === Inputs e Forms === */
+  input.form-control,
+  textarea.form-control {
+    background-color: #1b1b1b;
+    border: 1px solid #f9d923;
+    color: #f9d923;
+    border-radius: 6px;
+  }
+  
+  input.form-control:focus {
+    background-color: #101010;
+    border-color: #f9d923;
+    box-shadow: 0 0 5px #f9d92388;
+  }
+  
+  /* === Nav Tabs === */
+  .nav-tabs .nav-link {
+    color: #f9d923;
+    background-color: #1a1a1a;
+    border: 1px solid #f9d923;
+    margin-right: 4px;
+    border-radius: 6px 6px 0 0;
+  }
+  
+  .nav-tabs .nav-link.active {
+    background-color: #000;
+    color: #f9d923;
+    border-bottom-color: transparent;
+  }
+  
+  /* === Cards Internos === */
+  .card {
+    background-color: #181818;
+    border: 1px solid #f9d923;
+    color: #f9d923;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(249, 217, 35, 0.1);
+  }
+  
+  /* === Modal === */
+  .modal-content {
+    background-color: #141414;
+    border: 1px solid #f9d923;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(249, 217, 35, 0.2);
+  }
+  
+  .modal-header,
+  .modal-footer {
+    border-color: #292929;
+  }
+  
+  /* === Fechar Modal (X) === */
+  .btn-close {
+    filter: invert(100%);
+  }
+  
+  /* === Animação Hover Light === */
+  button:hover, .nav-tabs .nav-link:hover {
+    box-shadow: 0 0 10px rgba(249, 217, 35, 0.5);
+  }
+  
+  /* === Responsividade === */
+  @media (max-width: 768px) {
+    .table th, .table td {
+      font-size: 14px;
+      padding: 10px;
+    }
+  
+    h1, h2 {
+      font-size: 1.5rem;
+    }
+  }
 
-button:hover {
-    background-color: #45a049;
-}
-
-/* Form */
-form {
-    margin: 20px 0;
-}
-
-form input, form select {
-    padding: 10px;
-    margin: 10px 0;
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-form input:focus, form select:focus {
-    border-color: #4CAF50;
-    outline: none;
-    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-}
+  /* Corrige o hover escurecido da tabela */
+.table tbody tr:hover {
+    background-color: #222222 !important; /* fundo mais claro no hover */
+    color: #f9d923 !important;            /* garante visibilidade do texto */
+  }
+  
+  /* Garante que todas as células também herdem a cor visível */
+  .table tbody tr:hover td {
+    color: #f9d923 !important;
+  }
+  
+  /* Evita que botões fiquem com sombra escura em hover */
+  .btn:focus,
+  .btn:hover {
+    box-shadow: 0 0 6px rgba(249, 217, 35, 0.3) !important;
+    color: #000 !important;
+  }
+  
+  
