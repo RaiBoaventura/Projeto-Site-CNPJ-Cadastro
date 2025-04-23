@@ -78,48 +78,58 @@ document.addEventListener("DOMContentLoaded", () => {
         const socios = JSON.parse(localStorage.getItem("sociosData"));
         const referenciasComerciais = JSON.parse(localStorage.getItem("commercialRefs"));
         const referenciasBancarias = JSON.parse(localStorage.getItem("bankRefs"));
-
+    
         const referenciasComerciaisLimpa = removerCamposIncompletos(referenciasComerciais, ["fornecedor", "telefone", "ramo_atividade", "contato"]);
         const referenciasBancariasLimpa = removerCamposIncompletos(referenciasBancarias, ["banco", "agencia", "conta"]);
-
+    
+        // Validação: pelo menos uma referência comercial
+        if (referenciasComerciaisLimpa.length === 0) {
+            alert("Adicione pelo menos uma referência comercial antes de finalizar o cadastro.");
+            return;
+        }
+    
         const payload = {
             pessoaJuridica: {
                 ...empresa,
                 capital_social: empresa.capital_social ? parseFloat(empresa.capital_social) : null
             },
             socios,
-            referenciasComerciais: referenciasComerciaisLimpa.map(ref => ({
+            commercialRefs: referenciasComerciaisLimpa.map(ref => ({ // Corrigido para "commercialRefs"
                 fornecedor: ref.fornecedor,
-                telefone: ref.telefone && /\d/.test(ref.telefone) ? ref.telefone.replace(/\D/g, "") : null                ,
+                telefone: ref.telefone && /\d/.test(ref.telefone) ? ref.telefone.replace(/\D/g, "") : null,
                 ramo_atividade: ref.ramo_atividade,
                 contato: ref.contato
             })),
-            referenciasBancarias: referenciasBancariasLimpa.map(ref => ({
+            bankRefs: referenciasBancariasLimpa.map(ref => ({ // Corrigido para "bankRefs"
                 banco: ref.banco,
                 agencia: ref.agencia ? String(ref.agencia).replace(/\D/g, "") : null,
                 conta: ref.conta ? String(ref.conta).replace(/\D/g, "") : null,
                 dataAbertura: ref.dataAbertura ? new Date(ref.dataAbertura).toISOString().split("T")[0] : null,
-                telefone: ref.telefone && /\d/.test(ref.telefone) ? ref.telefone.replace(/\D/g, "") : null                ,
+                telefone: ref.telefone && /\d/.test(ref.telefone) ? ref.telefone.replace(/\D/g, "") : null,
                 gerente: ref.gerente,
                 observacoes: ref.observacoes
             }))
         };
-
+    
         console.log("📤 Enviando payload corrigido:", JSON.stringify(payload, null, 2));
-
+    
         try {
-            const response = await fetch("http://localhost:3000/api/salvarTudo", {
+            const response = await fetch("http://localhost:3000/api/salvarTudo/empresa", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
-
-            if (!response.ok) throw new Error("Erro ao salvar os dados");
-
+    
+            if (!response.ok) {
+                const errorDetails = await response.json();
+                console.error("❌ Server error details:", errorDetails);
+                throw new Error("Erro ao salvar os dados");
+            }
+    
             alert("Cadastro finalizado com sucesso!");
             localStorage.clear();
             window.location.href = "sucesso.html";
-
+    
         } catch (error) {
             console.error("Erro ao enviar os dados:", error);
             alert("Erro ao finalizar o cadastro. Tente novamente.");
