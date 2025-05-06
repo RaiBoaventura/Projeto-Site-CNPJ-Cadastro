@@ -38,47 +38,7 @@ const salvarTudo = async (req, res) => {
                 pessoaId = checkEmpresa.rows[0].id;
                 console.log(`Empresa existente encontrada (ID: ${pessoaId}). Atualizando...`);
                 
-                await client.query(
-                    `UPDATE empresa SET 
-                        razao_social = $1,
-                        nome_fantasia = $2,
-                        inscricao_estadual = $3,
-                        ramo_atividade = $4,
-                        data_fundacao = $5,
-                        capital_social = $6,
-                        conta_bancaria = $7,
-                        email = $8,
-                        site = $9,
-                        contador = $10,
-                        logradouro = $11,
-                        numero_complemento = $12,
-                        bairro = $13,
-                        cidade = $14,
-                        uf = $15,
-                        telefone = $16,
-                        telefone_contador = $17
-                    WHERE cnpj = $18`,
-                    [
-                        pessoaJuridica.razao_social,
-                        pessoaJuridica.nome_fantasia ?? null,
-                        pessoaJuridica.inscricao_estadual ?? null,
-                        pessoaJuridica.ramo_atividade ?? null,
-                        pessoaJuridica.data_fundacao ?? null,
-                        pessoaJuridica.capital_social ?? null,
-                        pessoaJuridica.conta_bancaria ?? null,
-                        pessoaJuridica.email ?? null,
-                        pessoaJuridica.site ?? null,
-                        pessoaJuridica.contador ?? null,
-                        pessoaJuridica.logradouro ?? null,
-                        pessoaJuridica.numero_complemento ?? null,
-                        pessoaJuridica.bairro ?? null,
-                        pessoaJuridica.cidade ?? null,
-                        pessoaJuridica.uf ?? null,
-                        pessoaJuridica.telefone ?? null,
-                        pessoaJuridica.telefone_contador ?? null,
-                        pessoaJuridica.cnpj
-                    ]
-                );
+                
             
             } else {
                 console.log("Empresa nova. Inserindo...");
@@ -117,43 +77,69 @@ const salvarTudo = async (req, res) => {
             
 
             for (const socio of socios) {
-                if (!socio.nome?.trim()) {
-                    console.log("⚠ Sócio ignorado: Nome vazio");
+                const nome = socio.nome?.trim();
+                if (!nome) {
+                    console.log("⚠ Sócio ignorado: Nome vazio ou nulo");
                     continue;
                 }
-                console.log("Salvando sócio:", socio);
+            
+                console.log("Salvando ou atualizando sócio:", socio);
                 await client.query(
                     `INSERT INTO socios (
                         id_empresa, nome, cep, endereco, bairro, cidade, uf, telefone, email, numero
-                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+                    ON CONFLICT (id_empresa, nome)
+                    DO UPDATE SET
+                        cep = EXCLUDED.cep,
+                        endereco = EXCLUDED.endereco,
+                        bairro = EXCLUDED.bairro,
+                        cidade = EXCLUDED.cidade,
+                        uf = EXCLUDED.uf,
+                        telefone = EXCLUDED.telefone,
+                        email = EXCLUDED.email,
+                        numero = EXCLUDED.numero`,
                     [
                         pessoaId,
-                        socio.nome,
-                        socio.cep ?? null,
-                        socio.endereco ?? null,
-                        socio.bairro ?? null,
-                        socio.cidade ?? null,
-                        socio.uf ?? null,
-                        socio.telefone ?? null,
-                        socio.email ?? null,
-                        socio.numero ?? null
+                        nome,
+                        socio.cep?.trim() || null,
+                        socio.endereco?.trim() || null,
+                        socio.bairro?.trim() || null,
+                        socio.cidade?.trim() || null,
+                        socio.uf?.trim() || null,
+                        socio.telefone?.trim() || null,
+                        socio.email?.trim() || null,
+                        socio.numero?.trim() || null
                     ]
                 );
             }
+            
+            
 
             for (const ref of commercialRefs) {
                 if (!ref.fornecedor?.trim()) {
                     console.log("⚠ Referência comercial ignorada: Fornecedor vazio");
                     continue;
                 }
-                console.log("Salvando referência comercial:", ref);
+                console.log("Salvando ou atualizando referência comercial:", ref);
                 await client.query(
                     `INSERT INTO referenciascomerciais (
                         id_empresa, fornecedor, telefone, ramo_atividade, contato
-                    ) VALUES ($1, $2, $3, $4, $5)`,
-                    [pessoaId, ref.fornecedor, ref.telefone ?? null, ref.ramo_atividade ?? null, ref.contato ?? null]
+                    ) VALUES ($1, $2, $3, $4, $5)
+                    ON CONFLICT (id_empresa, fornecedor)
+                    DO UPDATE SET
+                        telefone = EXCLUDED.telefone,
+                        ramo_atividade = EXCLUDED.ramo_atividade,
+                        contato = EXCLUDED.contato`,
+                    [
+                        pessoaId,
+                        ref.fornecedor,
+                        ref.telefone ?? null,
+                        ref.ramo_atividade ?? null,
+                        ref.contato ?? null
+                    ]
                 );
             }
+            
 
             for (const ref of bankRefs) {
                 if (!ref.banco?.trim() || !ref.agencia?.trim() || !ref.conta?.trim()) {
@@ -164,18 +150,26 @@ const salvarTudo = async (req, res) => {
                 await client.query(
                     `INSERT INTO referenciasbancarias (
                         id_empresa, banco, agencia, conta, data_abertura, telefone, gerente, observacoes
-                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                    ON CONFLICT (id_empresa, banco, agencia)
+                    DO UPDATE SET
+                        conta = EXCLUDED.conta,
+                        data_abertura = EXCLUDED.data_abertura,
+                        telefone = EXCLUDED.telefone,
+                        gerente = EXCLUDED.gerente,
+                        observacoes = EXCLUDED.observacoes`,
                     [
                         pessoaId,
-                        ref.banco,
-                        ref.agencia,
-                        ref.conta,
+                        ref.banco?.trim() || null,
+                        ref.agencia?.trim() || null,
+                        ref.conta?.trim() || null,
                         ref.dataAbertura ?? null,
-                        ref.telefone ?? null,
-                        ref.gerente ?? null,
-                        ref.observacoes ?? null
+                        ref.telefone?.trim() || null,
+                        ref.gerente?.trim() || null,
+                        ref.observacoes?.trim() || null
                     ]
                 );
+                
             }
 
             await client.query("COMMIT");
